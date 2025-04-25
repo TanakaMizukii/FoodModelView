@@ -15,7 +15,7 @@ let hitTestSourceRequested = false;
 
 init();
 
-function init() {
+async function init() {
     const width = window.innerWidth;
     const height = window.innerHeight;
 
@@ -49,16 +49,18 @@ function init() {
 
     // レティクルのvisible=trueの時に表示するオブジェクトの作成
     // モデルの読み込み
-    const loader = new GLTFLoader();
-    async function onSelect() {
-        const menuContainer = document.querySelector('#menuContainer');
-        if (reticle.visible && menuContainer.classList.contains('collapsed')) {
-            const objects = await loader.loadAsync('./models/Tun_of2.glb');
+    window.loadModel = async function(modelPath) {
+        try {
+            const loader = new GLTFLoader();
+            const objects = await loader.loadAsync(modelPath);
             const model = objects.scene;
             const clone = model.clone(true);
-            // レティクルが示すワールド座標、向き、大きさをmeshに適応させreticleの会った場所にオブジェクトを表示
-            reticle.matrix.decompose( clone.position, clone.quaternion, clone.scale);
+            // レティクルが示すワールド座標、向き、大きさをmeshに適応させreticleの在った場所にオブジェクトを表示
+            reticle.matrix.decompose(clone.position, clone.quaternion, clone.scale);
             scene.add(clone);
+        } catch(error) {
+            alert('モデルの読み込みに失敗しました。');
+            return false;
         }
     }
 
@@ -76,7 +78,7 @@ function init() {
 
     // タッチなどを受け取るコントローラーを作成
     controller = renderer.xr.getController(0);
-    controller.addEventListener('select', onSelect);
+    // controller.addEventListener('select', await loadModel('./models/Tun_of2.glb'));
     scene.add(controller);
 }
 
