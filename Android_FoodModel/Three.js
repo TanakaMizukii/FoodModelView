@@ -15,10 +15,7 @@ let hitTestSourceRequested = false;
 
 init();
 
-function init() {
-    container = document.createElement('div');
-    document.body.appendChild(container);
-
+async function init() {
     const width = window.innerWidth;
     const height = window.innerHeight;
 
@@ -30,7 +27,9 @@ function init() {
     light.position.set( 0, 1, 0);
     scene.add(light);
 
+    const canvasElement = document.querySelector('#myCanvas');
     renderer = new THREE.WebGLRenderer({
+        canvas: canvasElement,
         antialias: true,
         alpha: true,
     });
@@ -38,30 +37,36 @@ function init() {
     renderer.setSize(width, height);
     renderer.setAnimationLoop(animate);
     renderer.xr.enabled = true;
-    // container(div要素)に<canvas>を追加
-    container.appendChild(renderer.domElement);
 
     // rendererのオプションとして{requiredFeatures: ['hit-test']}を記述して
     // 「ユーザーの周囲の平面を検出する」機能をオンにしているこれによりframe.getHitTestResults()を有効化
-    document.body.appendChild(ARButton.createButton(renderer, { requiredFeatures: ['hit-test'] }));
+    const arButton = (ARButton.createButton(renderer, {
+        requiredFeatures: ['hit-test'],
+        optionalFeatures: ['dom-overlay', 'dom-overlay-for-handle-ar' ],
+        domOverlay: { root: document.body }
+    }));
+    document.body.appendChild( arButton );
 
     // レティクルのvisible=trueの時に表示するオブジェクトの作成
     // モデルの読み込み
-    const loader = new GLTFLoader();
-    async function onSelect() {
-        if (reticle.visible) {
-            const objects = await loader.loadAsync('./foodModels/Tun_of2.glb');
+    window.loadModel = async function(modelPath) {
+        try {
+            const loader = new GLTFLoader();
+            const objects = await loader.loadAsync(modelPath);
             const model = objects.scene;
             const clone = model.clone(true);
-            // レティクルが示すワールド座標、向き、大きさをmeshに適応させreticleの会った場所にオブジェクトを表示
-            reticle.matrix.decompose( clone.position, clone.quaternion, clone.scale);
+            // レティクルが示すワールド座標、向き、大きさをmeshに適応させreticleの在った場所にオブジェクトを表示
+            reticle.matrix.decompose(clone.position, clone.quaternion, clone.scale);
             scene.add(clone);
+        } catch(error) {
+            alert('モデルの読み込みに失敗しました。');
+            return false;
         }
     }
 
     // レティクルの作成
     reticle = new THREE.Mesh(
-        new THREE.RingGeometry(0.1, 0.12, 32).rotateX( -Math.PI / 2),
+        new THREE.RingGeometry(0.05, 0.07, 32).rotateX( -Math.PI / 2),
         new THREE.MeshBasicMaterial(),
     );
     // 自動更新をオフに
@@ -73,7 +78,7 @@ function init() {
 
     // タッチなどを受け取るコントローラーを作成
     controller = renderer.xr.getController(0);
-    controller.addEventListener('select', onSelect);
+    // controller.addEventListener('select', await loadModel('./models/Tun_of2.glb'));
     scene.add(controller);
 }
 
