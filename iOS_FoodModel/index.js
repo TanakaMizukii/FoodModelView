@@ -17,9 +17,11 @@ scene.add(markerRoot);
 // THREEx.ArToolkitContextは「マーカー検出エンジン」の初期化を行うためのオブジェクト
 const arToolkitContext = new THREEx.ArToolkitContext({
     // カメラのキャリブレーションを行うためのdatファイルを挿入
-    cameraParametersUrl: '../data/camera_para.dat',
+    cameraParametersUrl: './data/camera_para.dat',
+    // 比率を記述
+    patternRatio: 0.6,
     // モードの選択
-    detectionMode: 'mono',
+    detectionMode: 'mono_and_matrix',
 });
 
 // THREEx.ArToolkitSourceではARとして使用する情報源(ソース)を指定
@@ -30,7 +32,7 @@ const arToolkitSource = new THREEx.ArToolkitSource({
 // THREEx.ArMarkerControlsでは使用するマーカーの種類と、そのURLを指定
 const arMarkerControls = new THREEx.ArMarkerControls(arToolkitContext, markerRoot, {
     type: 'pattern',
-    patternUrl: '../data/patt.hiro',
+    patternUrl: './data/pattern-qrcode_www.ryusei2024mymake.com (1).patt',
 });
 
 // それぞれの初期化を行う
@@ -42,7 +44,7 @@ arToolkitContext.init(() => {
 arToolkitSource.init(() => {
     // videoタグを.wrapper配下に移動させる。
     document.querySelector('.wrapper').appendChild(arToolkitSource.domElement);
-    setTimeout(handleResize, 200); // リサイズイベントを発火
+    setTimeout(handleResize, 400); // リサイズイベントを発火
 });
 
 window.addEventListener('resize', handleResize, {
