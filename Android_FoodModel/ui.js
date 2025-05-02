@@ -12,14 +12,6 @@ document.addEventListener('DOMContentLoaded', function() {
     let isMobileView = window.innerWidth < 768;
     let currentTab = 'メインメニュー';
 
-    // モデル関連の情報
-    const modelOptions = {
-        'モデル1': './models/Tun_of2.glb',
-        'モデル2': './models/9種盛り編集済(完).glb',
-        'モデル3': './models/カルビ盛り.glb',
-        'モデル4': './models/カルビ盛り編集済.glb',
-    };
-
     // 商品とモデルの関連付け
     const productModels = {
         '九種盛り': './models/9種盛り編集済(完).glb',
@@ -306,31 +298,6 @@ document.addEventListener('DOMContentLoaded', function() {
             menuContent.innerHTML = originalMenuContent;
             setupProductButtons();
 
-        } else if (tabName === 'モデル') {
-            // モデル選択用のUIを表示
-            let modelHTML = '';
-            for (const modelName in modelOptions) {
-                modelHTML += `
-                <div class="menu-item model-item" data-model="${modelOptions[modelName]}">
-                    <img src="/api/placeholder/300/200" alt="${modelName}" class="menu-item-image">
-                    <div class="menu-item-info">
-                        <div class="menu-item-title">${modelName}</div>
-                        <button class="view-item-btn load-model-btn">モデルを表示</button>
-                    </div>
-                </div>`;
-            }
-            menuContent.innerHTML = modelHTML;
-            // モデル選択ボタンにイベントリスナーを追加
-            document.querySelectorAll('.load-model-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    // closestは指定した要素が一番近い祖先を返す。
-                    // element.datasetはその要素の全ての[data-]属性をオブジェクト化したもの
-                    // 属性名のハイフン(-)はキャメルケースに変換されるため、data-modelは.dataset.modelというプロパティ名になる。
-                    const modelPath = this.closest('.model-item').dataset.model;
-                    loadAndDisplayModel(modelPath);
-                });
-            });
-
         } else if (tabName === 'おすすめ') {
             // おすすめメニューのコンテンツを上で指定した連想配列から表示
             let modelHTML = '';
@@ -403,43 +370,41 @@ document.addEventListener('DOMContentLoaded', function() {
     // 商品表示ボタンのイベントリスナーを設定
     function setupProductButtons() {
         const viewItemButtons = document.querySelectorAll('.view-item-btn');
+        const viewItemPanels = document.querySelectorAll('.load-item-panel');
 
         viewItemButtons.forEach(button => {
-            if (!button.classList.contains('load-model-btn')) {
-                button.addEventListener('click', function() {
-                    const productName = this.closest('.menu-item-info').querySelector('.menu-item-title').textContent;
+            button.addEventListener('click', function() {
+                console.log(this.closest);
+                const productName = this.closest('.menu-item-info').querySelector('.menu-item-title').textContent;
 
-                    // 製品名に対応するモデルパスを取得
-                    const modelPath = productModels[productName];
+                // 製品名に対応するモデルパスを取得
+                const modelPath = productModels[productName];
 
-                    if (modelPath) {
-                        // モデルを読み込んで表示
-                        loadAndDisplayModel(modelPath);
-                    } else {
-                        alert(`${productName}の3Dモデルは利用できません。`);
-                    }
-                });
-            }
+                if (modelPath) {
+                    // モデルを読み込んで表示
+                    loadAndDisplayModel(modelPath);
+                } else {
+                    alert(`${productName}の3Dモデルは利用できません。`);
+                }
+            });
+        });
+        viewItemPanels.forEach(panel => {
+            panel.addEventListener('click', function() {
+                const productName = this.querySelector('.menu-item-title').textContent;
+
+                // 製品名に対応するモデルパスを取得
+                const modelPath = productModels[productName];
+
+                if (modelPath) {
+                    // モデルを読み込んで表示
+                    loadAndDisplayModel(modelPath);
+                } else {
+                    alert(`${productName}の3Dモデルは利用できません。`);
+                }
+            });
         });
     }
 
     // 初期設定：商品表示ボタンのイベントリスナーを設定
     setupProductButtons();
-
-    // モデルタブがすでに存在しない場合にのみ追加
-    if (![...tabButtons].some(btn => btn.textContent === 'モデル')) {
-        const tabNav = document.querySelector('.tab-navigation');
-        const modelTabBtn = document.createElement('button');
-        modelTabBtn.className = 'tab-btn';
-        modelTabBtn.textContent = 'モデル';
-        tabNav.appendChild(modelTabBtn);
-
-        // モデルタブのイベントリスナーを設定
-        modelTabBtn.addEventListener('click', function() {
-            tabButtons.forEach(btn => btn.classList.remove('active'));
-            this.classList.add('active');
-            currentTab = 'モデル';
-            updateContent('モデル');
-        });
-    }
 });
