@@ -38,7 +38,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const recMenuItems = {
         '特上カルビ': {
             'image': './images/特上カルビ.PNG',
-            'model': './models/特上カルビ1人前.glb',
+            'model': './models/特上カルビ1人前編集済.glb',
             'description': '特上カルビの説明文',
             'price': 2000,
         },
@@ -49,7 +49,7 @@ document.addEventListener('DOMContentLoaded', function() {
             'price': 1500,
         },
         '並カルビ': {
-            'image': './images/並みカルビ.PNG',
+            'image': './images/並カルビ.PNG',
             'model': './models/並カルビ1人前.glb',
             'description': '並カルビの説明文',
             'price': 1000,
@@ -59,6 +59,12 @@ document.addEventListener('DOMContentLoaded', function() {
             'model': './models/豚トロ2人前.glb',
             'description': '豚トロの説明文',
             'price': 3000,
+        },
+        '盛岡冷麺': {
+            'image': './images/盛岡冷麺.PNG',
+            'model': './models/盛岡冷麺.glb',
+            'description': '盛岡冷麺の説明文',
+            'price': 980,
         },
     }
 
@@ -303,7 +309,7 @@ document.addEventListener('DOMContentLoaded', function() {
             let modelHTML = '';
             for (const recMenuItem in recMenuItems) {
                 modelHTML += `
-                <div class="menu-item">
+                <div class="menu-item load-item-panel">
                     <img src="${recMenuItems[recMenuItem]['image']}" alt="${recMenuItem}" class="menu-item-image">
                     <div class="menu-item-info">
                         <div class="menu-item-title">${recMenuItem}</div>
@@ -374,7 +380,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
         viewItemButtons.forEach(button => {
             button.addEventListener('click', function() {
-                console.log(this.closest);
                 const productName = this.closest('.menu-item-info').querySelector('.menu-item-title').textContent;
 
                 // 製品名に対応するモデルパスを取得
@@ -390,7 +395,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
         viewItemPanels.forEach(panel => {
             panel.addEventListener('click', function() {
-                console.log(this);
                 const productName = this.querySelector('.menu-item-title').textContent;
 
                 // 製品名に対応するモデルパスを取得
