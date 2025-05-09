@@ -8,6 +8,9 @@
 #ARButton {
     bottom: 90% !important;
 }
+#ARButton:xr-overlay {
+    display: none !important;
+}
 
 body {
     background-color: black;
