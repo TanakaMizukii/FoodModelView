@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', function() {
             'image': './images/特上カルビ.PNG',
             'model': './models/特上カルビ1人前編集済.glb',
             'minDetail': 'カルビの中の最高級部位',
-            'description': 'とろけるようなカルビの最高級部位。特別な日にどうぞ。',
+            'description': 'カルビの最高級部位。\n口の中でとろけだす上質な油をご堪能ください。',
             'price': '1500 (税込1650)', // 文字列形式に変更
         },
         '上カルビ': {
@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', function() {
             'image': './images/並カルビ.PNG',
             'model': './models/並カルビ1人前.glb',
             'minDetail': 'リーズナブルな大判カルビ',
-            'description': '焼肉の定番！お手頃価格で楽しめるカルビ。',
+            'description': '焼肉の定番！お手頃価格で楽しめる大判カルビ。',
             'price': '880 (税込968)', // 文字列形式に変更
         },
         '豚トロ': {
@@ -75,7 +75,7 @@ document.addEventListener('DOMContentLoaded', function() {
         'テッチャン2人前': {
             'image': './images/テッチャン.PNG',
             'model': './models/テッチャン2人前.glb',
-            'description': 'シマチョウとも呼ばれる牛の大腸。脂の甘みが特徴。',
+            'description': 'シマチョウとも呼ばれる牛の大腸\n脂の甘みが特徴',
             'price': '580 (税込638)', // 文字列形式に変更
         },
         'ニンニク焼き': {
@@ -87,7 +87,7 @@ document.addEventListener('DOMContentLoaded', function() {
         'ハラミ2人前': {
             'image': './images/ハラミ.PNG',
             'model': './models/ハラミ2人前.glb',
-            'description': '柔らかくヘルシーな横隔膜の部位。人気メニュー。',
+            'description': '牛の横隔膜の部位\n柔らかくてヘルシーなため人気メニュー！',
             'price': '1030 (税込1133)', // 文字列形式に変更
         },
         'もやしナムル': {
@@ -105,7 +105,7 @@ document.addEventListener('DOMContentLoaded', function() {
         '上タン塩２人前': {
             'image': './images/上タン塩.PNG',
             'model': './models/Tun_of2.glb',
-            'description': 'タンの中の上質な部分を選別 程よい油が口の中に広がります。',
+            'description': 'タンの中でも上質な部分。レモンで食べると \n程よい油が口の中に広がります。',
             'price': '980 (税込1078)', // 文字列形式に変更
         },
         '盛岡冷麺': {
@@ -124,7 +124,7 @@ document.addEventListener('DOMContentLoaded', function() {
             'image': './images/タン先.PNG',
             'model': './models/タン先1人前.glb',
             'description': '歯ごたえのあるタン先。噛むほどに旨味が出ます。',
-            'price': '750', // 文字列形式に変更 (税込不明)
+            'price': '900 (税込990)', // 文字列形式に変更 (税込不明)
         }
     };
 

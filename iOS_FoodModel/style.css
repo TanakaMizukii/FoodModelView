@@ -340,6 +340,7 @@ body {
     color: #333;
     overflow: hidden;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    visibility: visible;
     /* アニメーション設定 */
     animation: detailFadeIn 4s ease-in;
     animation-name: title_text;

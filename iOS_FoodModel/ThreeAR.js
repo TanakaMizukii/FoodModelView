@@ -64,6 +64,7 @@ async function init() {
     arToolkitContext.init(() => {
         // Three.jsカメラの画角やアスペクト比を、実際のカメラ映像とぴったり一致させる。
         camera.projectionMatrix.copy(arToolkitContext.getProjectionMatrix());
+        camera.layers.enable(1); // 詳細表示レイヤーを有効化
     });
 
     arToolkitSource.init(() => {
@@ -87,7 +88,7 @@ async function init() {
     labelRenderer.domElement.addEventListener('click', handleClick);
 
     // 初回モデル表示の実装
-    await loadModel('./models/Tun_of2.glb', 'タンの中の上質な部分を選別 程よい油が口の中に広がります')
+    await loadModel('./models/Tun_of2.glb', 'タンの中でも上質な部分。レモンで食べると \n程よい油が口の中に広がります')
 
     window.addEventListener('resize', handleResize, {
         passive: true,
@@ -128,22 +129,18 @@ window.loadModel = async function (modelPath, modelDetail) {
             if (child instanceof THREE.Mesh) {
                 objectList.push(child);
                 // 各メッシュにもユーザーデータを設定
-                child.userData.isDetail = true;
+                // child.userData.isDetail = true;
             }
         })
 
         // 詳細情報を設定
-        const detailElement = document.querySelector('.detail');
-        if (detailElement) {
-            detailElement.remove();
-        }
         detailDiv = document.createElement('div');
         detailDiv.className = 'detail';
         detailDiv.textContent = modelDetail;
 
         // 作成したdiv情報をオブジェクトとして作成
         const detail = new CSS2DObject(detailDiv);
-        detail.position.set(0.01, 0.08, -0.03);
+        detail.position.set(0.1, 0.08, -0.03);
         detail.center = new THREE.Vector2();
         detail.center.set(0, 0.8);
         model.add(detail);
@@ -154,7 +151,7 @@ window.loadModel = async function (modelPath, modelDetail) {
             setTimeout(() => {
                 loadingOverlay.classList.remove('visible');
                 // 初回だけ詳細情報を無条件で表示させる
-                if (detailNum = 0) {
+                if (detailNum == 0) {
                     camera.layers.enable(1);
                     detailNum += 1;
                 }
@@ -177,6 +174,10 @@ window.loadModel = async function (modelPath, modelDetail) {
 
 // 表示していたモデルを分解してメモリを解放する関数
 function disposeModel(targetModel) {
+    const detailElement = document.querySelector('.detail');
+    if (detailElement) {
+        detailElement.remove();
+    }
     targetModel.traverse(function (obj) {
         // objにはtargetModelが入る
         if (obj instanceof THREE.Mesh) {
@@ -216,17 +217,24 @@ function handleClick(event) {
 
     // クリックしたオブジェクトがそこに存在していれば値を変更
     if (intersects.length > 0) {
-        const clickedObject = intersects[0].object;
+        let clickedObject = intersects[0].object;
+        while (clickedObject.parent && clickedObject !== nowModel && clickedObject !== markerRoot) {
+            clickedObject = clickedObject.parent;
+        }
+
         // この操作で今の値(boolean値)を反転させる
         if (clickedObject.userData.isDetail == undefined) {
             clickedObject.userData.isDetail = true;
         };
-        clickedObject.userData.isDetail =! clickedObject.userData.isDetail;
+        clickedObject.userData.isDetail = !clickedObject.userData.isDetail;
+        const detailElement = document.querySelector('.detail');
 
         if (clickedObject.userData.isDetail) {
-            camera.layers.enable(1);
+            detailElement.style.visibility = 'visible';
+            // camera.layers.enable(1);
         } else {
-            camera.layers.disable(1);
+            detailElement.style.visibility = 'hidden';
+            // camera.layers.disable(1);
         };
     };
 }
