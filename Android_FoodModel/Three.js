@@ -1,14 +1,23 @@
 import * as THREE from "three";
 import { ARButton } from "three/addons/webxr/ARButton.js";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
+import { CSS2DRenderer, CSS2DObject } from "three/addons/renderers/CSS2DRenderer.js";
 
 let scene, camera, light, renderer;
-let controller;
 
 let reticle;
 
-// 初回オブジェクト表示に使用
-let viewerNum = null;
+let detailDiv = null;
+let detailNum = 0;
+
+let labelRenderer;
+let mouse;
+let raycaster;
+// レイキャストで反応させたい物を格納しておくリスト
+let objectList = [];
+
+// 表示するオブジェクトのレイヤーの番号を格納する変数
+let layerNum = 1;
 
 // ユーザー周囲の空間平面の検出用オブジェクトを格納する
 let hitTestSource = null;
@@ -52,34 +61,123 @@ async function init() {
         new THREE.RingGeometry(0.05, 0.07, 32).rotateX( -Math.PI / 2),
         new THREE.MeshBasicMaterial(),
     );
-    // 自動更新をオフに
+    // レティクルの交差情報の自動更新をオフに
     reticle.matrixAutoUpdate = false;
     reticle.visible = false;
     scene.add(reticle);
 
-    window.addEventListener('resize', onResize);
+    labelRenderer = new CSS2DRenderer();
+    labelRenderer.setSize(window.innerWidth, window.innerHeight);
+    labelRenderer.domElement.style.position = 'absolute';
+    labelRenderer.domElement.style.top = '0px';
+    labelRenderer.domElement.id = 'label';
+    document.body.appendChild(labelRenderer.domElement);
 
-    // タッチなどを受け取るコントローラーを作成
-    controller = renderer.xr.getController(0);
-    // controller.addEventListener('select', await loadModel('./models/Tun_of2.glb'));
-    scene.add(controller);
+    mouse = new THREE.Vector2();
+
+    raycaster = new THREE.Raycaster();
+    labelRenderer.domElement.addEventListener('click', handleClick);
+
+    window.addEventListener('resize', onResize);
 }
 
 // レティクルのvisible=trueの時に表示するオブジェクトの作成
 // モデルの読み込み
-window.loadModel = async function(modelPath) {
+window.loadModel = async function(modelPath, modelDetail) {
     try {
+        // ローディングインジケーターの表示
+        const loadingOverlay = document.getElementById('loading');
+        if (loadingOverlay) {
+            loadingOverlay.classList.add('visible');
+        }
+        console.log(modelDetail);
+
+        // 今回表示するモデルの読み込み
         const loader = new GLTFLoader();
         const objects = await loader.loadAsync(modelPath);
         const model = objects.scene;
         const clone = model.clone(true);
+        // 詳細オブジェクトの表示状態をboolean値で設定
+        clone.userData.isDetail = true;
         // レティクルが示すワールド座標、向き、大きさをmeshに適応させreticleの在った場所にオブジェクトを表示
         reticle.matrix.decompose(clone.position, clone.quaternion, clone.scale);
+        // cloneも同じレイヤーに所属させるために設定
+        clone.layers.set(layerNum);
         scene.add(clone);
+        objectList.push(clone);
+
+        // 詳細情報を設定
+        detailDiv = document.createElement('div');
+        detailDiv.className = 'detail';
+        detailDiv.textContent = modelDetail;
+
+        // 作成したdiv情報をオブジェクトとして作成
+        const detail = new CSS2DObject(detailDiv);
+        detail.position.set(0.01, 0.08, -0.03);
+        detail.center.set(0, 1);
+        detail.layers.set(layerNum);
+        clone.add(detail);
+
+        // ローディングインジケーターを非表示
+        if (loadingOverlay) {
+            setTimeout(() => {
+                loadingOverlay.classList.remove('visible');
+                // 初回だけ無条件で表示を行う
+                if (detailNum == 0) {
+                    camera.layers.enable(layerNum);
+                }
+                detailNum += 1;
+            }, 100);
+        }
+
+        return true;
     } catch(error) {
+        const loadingOverlay = document.getElementById('loading');
+        if(loadingOverlay) {
+            setTimeout(() => {
+                loadingOverlay.classList.remove('visible');
+            }, 100);
         alert('モデルの読み込みに失敗しました。');
         return false;
+        }
     }
+}
+
+function handleClick(event) {
+    const element = event.currentTarget;
+    // canvas要素上のXY座標
+    const x = event.clientX - element.offsetLeft;
+    const y = event.clientY - element.offsetTop;
+    // canvas要素の幅・高さ
+    const w = element.offsetWidth;
+    const h = element.offsetHeight;
+
+    // クリックしたらマウスの座標を-1~1の範囲で登録
+    mouse.x = (x / w) * 2 - 1;
+    mouse.y = -(y / h) * 2 + 1;
+
+    // マウス位置に光線ベクトルを作成
+    raycaster.setFromCamera(mouse, camera);
+    // 光線とぶつかったオブジェクトを取得
+    const intersects = raycaster.intersectObjects(objectList);
+
+    // クリックした場所にオブジェクトが存在していれば値を変更
+    if (intersects.length > 0) {
+        const clickedObject = intersects[0].object;
+        console.log(clickedObject);
+
+        // 値を反転させる
+        if (clickedObject.userData.isDetail==undefined) {
+            clickedObject.userData.isDetail = true;
+        }
+        clickedObject.userData.isDetail = !clickedObject.userData.isDetail;
+        // レイヤーに合致する詳細情報を操作できるようにする
+        if (clickedObject.userData.isDetail) {
+            camera.layers.enable(clickedObject.layers['mask']);
+        } else {
+            camera.layers.disable(clickedObject.layers['mask']);
+        }
+    };
 }
 
 init();
@@ -136,7 +234,7 @@ function animate(timestamp, frame) {
             }
             // reticleが見えてから2秒以上経ったらモデル表示を一度だけ発火
             if (viewNum === 0  && reticleShowTime !== null && timestamp - reticleShowTime > 1500) {
-                window.loadModel('./models/Tun_of2.glb');
+                window.loadModel('./models/Tun_of2.glb', 'タンの中の上質な部分を選別 程よい油が口の中に広がります');
                 viewNum = 1;
                 reticleShowTime = null;
             }
@@ -144,6 +242,7 @@ function animate(timestamp, frame) {
     }
 
     renderer.render(scene, camera);
+    labelRenderer.render(scene, camera);
 }
 
 function onResize() {
@@ -154,4 +253,5 @@ function onResize() {
     camera.updateProjectionMatrix();
 
     renderer.setSize(width, height);
+    labelRenderer.setSize(width, height);
 }
