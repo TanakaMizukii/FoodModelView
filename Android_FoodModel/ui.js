@@ -18,26 +18,26 @@ document.addEventListener('DOMContentLoaded', function() {
             'image': './images/特上カルビ.PNG',
             'model': './models/特上カルビ1人前編集済.glb',
             'minDetail': 'カルビの中の最高級部位',
-            'description': 'とろけるようなカルビの最高級部位。特別な日にどうぞ。',
+            'description': 'カルビの最高級部位。\n口の中でとろけだす上質な油をご堪能ください。',
             'price': '1500 (税込1650)', // 文字列形式に変更
         },
         '上カルビ': {
             'image': './images/上カルビ１人前.PNG',
-            'model': './models/上カルビ1人前2.glb',
+            'model': './models/上カルビ1人前3編集済.glb',
             'minDetail': 'カルビの中の上級部位',
             'description': '上質な脂の旨味が楽しめる人気のカルビ。',
             'price': '1080 (税込1188)', // 文字列形式に変更
         },
         '並カルビ': {
             'image': './images/並カルビ.PNG',
-            'model': './models/並カルビ1人前.glb',
+            'model': './models/並カルビ1人前編集済.glb',
             'minDetail': 'リーズナブルな大判カルビ',
-            'description': '焼肉の定番！お手頃価格で楽しめるカルビ。',
+            'description': '焼肉の定番！お手頃価格で楽しめる大判カルビ。',
             'price': '880 (税込968)', // 文字列形式に変更
         },
         '豚トロ': {
             'image': './images/豚トロ２人前.PNG',
-            'model': './models/豚トロ2人前.glb',
+            'model': './models/豚トロ編集済.glb',
             'minDetail': '豚の甘い油を堪能できます',
             'description': 'コリコリとした食感が人気の豚トロ。塩でもタレでも。',
             'price': '1140 (税込1254)', // 文字列形式に変更
@@ -75,7 +75,7 @@ document.addEventListener('DOMContentLoaded', function() {
         'テッチャン2人前': {
             'image': './images/テッチャン.PNG',
             'model': './models/テッチャン2人前.glb',
-            'description': 'シマチョウとも呼ばれる牛の大腸。脂の甘みが特徴。',
+            'description': 'シマチョウとも呼ばれる牛の大腸\n脂の甘みが特徴',
             'price': '580 (税込638)', // 文字列形式に変更
         },
         'ニンニク焼き': {
@@ -87,12 +87,12 @@ document.addEventListener('DOMContentLoaded', function() {
         'ハラミ2人前': {
             'image': './images/ハラミ.PNG',
             'model': './models/ハラミ2人前.glb',
-            'description': '柔らかくヘルシーな横隔膜の部位。人気メニュー。',
+            'description': '牛の横隔膜の部位\n柔らかくてヘルシーなため人気メニュー！',
             'price': '1030 (税込1133)', // 文字列形式に変更
         },
         'もやしナムル': {
             'image': './images/もやしナムル.PNG',
-            'model': './models/もやしナムル1.glb',
+            'model': './models/もやしナムル1編集済.glb',
             'description': 'シャキシャキ食感のごま油香る定番ナムル。',
             'price': '400 (税込440)', // 文字列形式に変更
         },
@@ -105,18 +105,18 @@ document.addEventListener('DOMContentLoaded', function() {
         '上タン塩２人前': {
             'image': './images/上タン塩.PNG',
             'model': './models/Tun_of2.glb',
-            'description': 'タンの中の上質な部分を選別 程よい油が口の中に広がります。',
+            'description': 'タンの中でも上質な部分。レモンで食べると \n程よい油が口の中に広がります。',
             'price': '980 (税込1078)', // 文字列形式に変更
         },
         '盛岡冷麺': {
             'image': './images/盛岡冷麺.PNG',
             'model': './models/盛岡冷麺.glb',
-            'description': 'シメにぴったり！つるつる食感の本格冷麺。',
+            'description': 'シメにぴったり！つるつる食感の本格冷麺。\nさっぱりとおいしく頂けます！',
             'price': '900 (税込990)', // 文字列形式に変更
         },
         '馬刺し': {
             'image': './images/馬刺し.PNG',
-            'model': './models/馬刺し.glb',
+            'model': './models/馬刺し編集済.glb',
             'description': '新鮮でヘルシーな馬刺し。生姜醤油でどうぞ。',
             'price': '1300', // 文字列形式に変更 (税込不明)
         },
@@ -124,12 +124,14 @@ document.addEventListener('DOMContentLoaded', function() {
             'image': './images/タン先.PNG',
             'model': './models/タン先1人前.glb',
             'description': '歯ごたえのあるタン先。噛むほどに旨味が出ます。',
-            'price': '750', // 文字列形式に変更 (税込不明)
+            'price': '900 (税込990)', // 文字列形式に変更 (税込不明)
         }
     };
 
     // 商品のカテゴリごとの情報を格納した連想配列
     const recMenuItems = [
+        '盛岡冷麺',
+        'サンチュ',
         '特上カルビ',
         '上カルビ',
         '並カルビ',
