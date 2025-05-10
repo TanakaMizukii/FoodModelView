@@ -14,59 +14,129 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // 商品とモデルの関連付け
     const productModels = {
-        '九種盛り': './models/9種盛り編集済(完).glb',
-        'カルビ盛り': './models/カルビ盛り編集済.glb',
-        'コプチャン': './models/コプチャン(味噌)1人前.glb',
-        'ご飯大': './models/ご飯大.glb',
-        'サンチュ': './models/サンチュ1人前.glb',
-        'テッチャン': './models/テッチャン2人前.glb',
-        'ニンニク焼き': './models/ニンニク焼き.glb',
-        'ハラミ': './models/ハラミ2人前.glb',
-        'もやしナムル': './models/もやしナムル1.glb',
-        'レバー塩': './models/レバー塩1人前.glb',
-        '上カルビ': './models/上カルビ1人前.glb',
-        '上タン塩２人前': './models/Tun_of2.glb',
-        '盛岡冷麺': './models/盛岡冷麺.glb',
-        '特上カルビ': './models/特上カルビ1人前編集済.glb',
-        '豚トロ': './models/豚トロ2人前.glb',
-        '馬刺し': './models/馬刺し.glb',
-        '並カルビ': './models/並カルビ1人前.glb',
-        '和牛のタン先': './models/タン先1人前.glb',
-    };
-
-    // 商品のカテゴリごとの情報を格納した連想配列
-    const recMenuItems = {
         '特上カルビ': {
             'image': './images/特上カルビ.PNG',
             'model': './models/特上カルビ1人前編集済.glb',
-            'description': '特上カルビの説明文',
-            'price': 2000,
+            'minDetail': 'カルビの中の最高級部位',
+            'description': 'カルビの最高級部位。\n口の中でとろけだす上質な油をご堪能ください。',
+            'price': '1500 (税込1650)', // 文字列形式に変更
         },
         '上カルビ': {
             'image': './images/上カルビ１人前.PNG',
-            'model': './models/上カルビ1人前.glb',
-            'description': '上カルビの説明文',
-            'price': 1500,
+            'model': './models/上カルビ1人前3編集済.glb',
+            'minDetail': 'カルビの中の上級部位',
+            'description': '上質な脂の旨味が楽しめる人気のカルビ。',
+            'price': '1080 (税込1188)', // 文字列形式に変更
         },
         '並カルビ': {
             'image': './images/並カルビ.PNG',
-            'model': './models/並カルビ1人前.glb',
-            'description': '並カルビの説明文',
-            'price': 1000,
+            'model': './models/並カルビ1人前編集済.glb',
+            'minDetail': 'リーズナブルな大判カルビ',
+            'description': '焼肉の定番！お手頃価格で楽しめる大判カルビ。',
+            'price': '880 (税込968)', // 文字列形式に変更
         },
         '豚トロ': {
             'image': './images/豚トロ２人前.PNG',
-            'model': './models/豚トロ2人前.glb',
-            'description': '豚トロの説明文',
-            'price': 3000,
+            'model': './models/豚トロ編集済.glb',
+            'minDetail': '豚の甘い油を堪能できます',
+            'description': 'コリコリとした食感が人気の豚トロ。塩でもタレでも。',
+            'price': '1140 (税込1254)', // 文字列形式に変更
+        },
+        '九種盛り': {
+            'image': './images/九種盛り.PNG',
+            'model': './models/9種盛り編集済(完).glb',
+            'description': '様々な部位を少しずつ楽しめるお得な盛り合わせ。',
+            'price': '3500', // 文字列形式に変更 (税込不明)
+        },
+        'カルビ盛り': {
+            'image': './images/カルビ盛り.PNG',
+            'model': './models/カルビ盛り編集済.glb',
+            'description': 'カルビ好きにはたまらない！\n4種類のカルビ盛り合わせ!',
+            'price': '2300 (税込2530)', // 文字列形式に変更
+        },
+        'コプチャン': {
+            'image': './images/コプチャン.PNG',
+            'model': './models/コプチャン(味噌)1人前.glb',
+            'description': 'ぷりぷり食感の牛の小腸。味噌ダレがよく合います。',
+            'price': '490 (税込539)', // 文字列形式に変更
+        },
+        'ご飯大': {
+            'image': './images/ご飯大.PNG',
+            'model': './models/ご飯大.glb',
+            'description': '焼肉のお供に！大盛りご飯。',
+            'price': '300 (税込330)', // 文字列形式に変更
+        },
+        'サンチュ': {
+            'image': './images/サンチュ.PNG',
+            'model': './models/サンチュ1人前.glb',
+            'description': 'お肉を巻いてさっぱりと。お口直しにも。',
+            'price': '400 (税込440)', // 文字列形式に変更
+        },
+        'テッチャン2人前': {
+            'image': './images/テッチャン.PNG',
+            'model': './models/テッチャン2人前.glb',
+            'description': 'シマチョウとも呼ばれる牛の大腸\n脂の甘みが特徴',
+            'price': '580 (税込638)', // 文字列形式に変更
+        },
+        'ニンニク焼き': {
+            'image': './images/ニンニク焼き.PNG',
+            'model': './models/ニンニク焼き.glb',
+            'description': 'ホクホク美味しい！ごま油で焼くニンニク。',
+            'price': '300 (税込330)', // 文字列形式に変更
+        },
+        'ハラミ2人前': {
+            'image': './images/ハラミ.PNG',
+            'model': './models/ハラミ2人前.glb',
+            'description': '牛の横隔膜の部位\n柔らかくてヘルシーなため人気メニュー！',
+            'price': '1030 (税込1133)', // 文字列形式に変更
+        },
+        'もやしナムル': {
+            'image': './images/もやしナムル.PNG',
+            'model': './models/もやしナムル1編集済.glb',
+            'description': 'シャキシャキ食感のごま油香る定番ナムル。',
+            'price': '400 (税込440)', // 文字列形式に変更
+        },
+        'レバー塩': {
+            'image': './images/レバー.PNG',
+            'model': './models/レバー塩1人前.glb',
+            'description': '新鮮なレバーを塩ダレで。焼きすぎに注意。',
+            'price': '460 (税込506)', // 文字列形式に変更
+        },
+        '上タン塩２人前': {
+            'image': './images/上タン塩.PNG',
+            'model': './models/Tun_of2.glb',
+            'description': 'タンの中でも上質な部分。レモンで食べると \n程よい油が口の中に広がります。',
+            'price': '980 (税込1078)', // 文字列形式に変更
         },
         '盛岡冷麺': {
             'image': './images/盛岡冷麺.PNG',
             'model': './models/盛岡冷麺.glb',
-            'description': '盛岡冷麺の説明文',
-            'price': 980,
+            'description': 'シメにぴったり！つるつる食感の本格冷麺。\nさっぱりとおいしく頂けます！',
+            'price': '900 (税込990)', // 文字列形式に変更
         },
-    }
+        '馬刺し': {
+            'image': './images/馬刺し.PNG',
+            'model': './models/馬刺し編集済.glb',
+            'description': '新鮮でヘルシーな馬刺し。生姜醤油でどうぞ。',
+            'price': '1300', // 文字列形式に変更 (税込不明)
+        },
+        '和牛のタン先': {
+            'image': './images/タン先.PNG',
+            'model': './models/タン先1人前.glb',
+            'description': '歯ごたえのあるタン先。噛むほどに旨味が出ます。',
+            'price': '900 (税込990)', // 文字列形式に変更 (税込不明)
+        }
+    };
+
+    // 商品のカテゴリごとの情報を格納した連想配列
+    const recMenuItems = [
+        '盛岡冷麺',
+        'サンチュ',
+        '特上カルビ',
+        '上カルビ',
+        '並カルビ',
+        '豚トロ',
+    ]
 
     // 画面サイズによってメニューの状態を初期化
     function initMenuBasedOnScreenSize() {
@@ -310,17 +380,15 @@ document.addEventListener('DOMContentLoaded', function() {
             for (const recMenuItem in recMenuItems) {
                 modelHTML += `
                 <div class="menu-item load-item-panel">
-                    <img src="${recMenuItems[recMenuItem]['image']}" alt="${recMenuItem}" class="menu-item-image">
+                    <img src="${productModels[recMenuItems[recMenuItem]]['image']}" alt="${recMenuItem}" class="menu-item-image">
                     <div class="menu-item-info">
-                        <div class="menu-item-title">${recMenuItem}</div>
-                        <div class="menu-item-description">${recMenuItems[recMenuItem]['description']}</div>
-                        <div class="menu-item-price">¥${recMenuItems[recMenuItem]['price']}</div>
+                        <div class="menu-item-title">${recMenuItems[recMenuItem]}</div>
+                        <div class="menu-item-description">${productModels[recMenuItems[recMenuItem]]['minDetail']}</div>
+                        <div class="menu-item-price">¥${productModels[recMenuItems[recMenuItem]]['price']}円</div>
                         <button class="view-item-btn">商品を表示</button>
                     </div>
                 </div>`;
             }
-            console.log('この関数は発火されていますか？')
-            // なんか表示されないので修正必要！！！
             menuContent.innerHTML = modelHTML;
             setupProductButtons();
 
@@ -357,12 +425,12 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // モデルを読み込んで表示する関数
-    function loadAndDisplayModel(modelPath) {
+    function loadAndDisplayModel(modelPath, modelDetail) {
         // モデルの読み込みと表示処理をglobalのloadModelメソッドに委譲
         // window.loadModelメソッドが存在しているか、またそれが関数として機能しているかを確かめ
         if (window.loadModel && typeof window.loadModel === 'function') {
             // 存在していたらThree.jsに記述してあるwindow.loadModel関数にモデルのパスを渡して起動
-            window.loadModel(modelPath);
+            window.loadModel(modelPath, modelDetail);
 
             // メニューを閉じる
             if (isMobileView) {
@@ -375,34 +443,19 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // 商品表示ボタンのイベントリスナーを設定
     function setupProductButtons() {
-        const viewItemButtons = document.querySelectorAll('.view-item-btn');
         const viewItemPanels = document.querySelectorAll('.load-item-panel');
 
-        viewItemButtons.forEach(button => {
-            button.addEventListener('click', function() {
-                const productName = this.closest('.menu-item-info').querySelector('.menu-item-title').textContent;
-
-                // 製品名に対応するモデルパスを取得
-                const modelPath = productModels[productName];
-
-                if (modelPath) {
-                    // モデルを読み込んで表示
-                    loadAndDisplayModel(modelPath);
-                } else {
-                    alert(`${productName}の3Dモデルは利用できません。`);
-                }
-            });
-        });
         viewItemPanels.forEach(panel => {
             panel.addEventListener('click', function() {
                 const productName = this.querySelector('.menu-item-title').textContent;
 
                 // 製品名に対応するモデルパスを取得
-                const modelPath = productModels[productName];
+                const modelPath = productModels[productName]['model'];
+                const modelDetail = productModels[productName]['description'];
 
-                if (modelPath) {
+                if (modelPath, modelDetail) {
                     // モデルを読み込んで表示
-                    loadAndDisplayModel(modelPath);
+                    loadAndDisplayModel(modelPath, modelDetail);
                 } else {
                     alert(`${productName}の3Dモデルは利用できません。`);
                 }
