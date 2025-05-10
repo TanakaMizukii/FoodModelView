@@ -23,21 +23,21 @@ document.addEventListener('DOMContentLoaded', function() {
         },
         '上カルビ': {
             'image': './images/上カルビ１人前.PNG',
-            'model': './models/上カルビ1人前2.glb',
+            'model': './models/上カルビ1人前3編集済.glb',
             'minDetail': 'カルビの中の上級部位',
             'description': '上質な脂の旨味が楽しめる人気のカルビ。',
             'price': '1080 (税込1188)', // 文字列形式に変更
         },
         '並カルビ': {
             'image': './images/並カルビ.PNG',
-            'model': './models/並カルビ1人前.glb',
+            'model': './models/並カルビ1人前編集済.glb',
             'minDetail': 'リーズナブルな大判カルビ',
             'description': '焼肉の定番！お手頃価格で楽しめる大判カルビ。',
             'price': '880 (税込968)', // 文字列形式に変更
         },
         '豚トロ': {
             'image': './images/豚トロ２人前.PNG',
-            'model': './models/豚トロ2人前.glb',
+            'model': './models/豚トロ編集済.glb',
             'minDetail': '豚の甘い油を堪能できます',
             'description': 'コリコリとした食感が人気の豚トロ。塩でもタレでも。',
             'price': '1140 (税込1254)', // 文字列形式に変更
@@ -92,7 +92,7 @@ document.addEventListener('DOMContentLoaded', function() {
         },
         'もやしナムル': {
             'image': './images/もやしナムル.PNG',
-            'model': './models/もやしナムル1.glb',
+            'model': './models/もやしナムル1編集済.glb',
             'description': 'シャキシャキ食感のごま油香る定番ナムル。',
             'price': '400 (税込440)', // 文字列形式に変更
         },
@@ -111,12 +111,12 @@ document.addEventListener('DOMContentLoaded', function() {
         '盛岡冷麺': {
             'image': './images/盛岡冷麺.PNG',
             'model': './models/盛岡冷麺.glb',
-            'description': 'シメにぴったり！つるつる食感の本格冷麺。',
+            'description': 'シメにぴったり！つるつる食感の本格冷麺。\nさっぱりとおいしく頂けます！',
             'price': '900 (税込990)', // 文字列形式に変更
         },
         '馬刺し': {
             'image': './images/馬刺し.PNG',
-            'model': './models/馬刺し.glb',
+            'model': './models/馬刺し編集済.glb',
             'description': '新鮮でヘルシーな馬刺し。生姜醤油でどうぞ。',
             'price': '1300', // 文字列形式に変更 (税込不明)
         },
@@ -130,6 +130,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // 商品のカテゴリごとの情報を格納した連想配列
     const recMenuItems = [
+        '盛岡冷麺',
+        'サンチュ',
         '特上カルビ',
         '上カルビ',
         '並カルビ',
