@@ -369,25 +369,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // 商品表示ボタンのイベントリスナーを設定
     function setupProductButtons() {
-        const viewItemButtons = document.querySelectorAll('.view-item-btn');
         const viewItemPanels = document.querySelectorAll('.load-item-panel');
 
-        viewItemButtons.forEach(button => {
-            button.addEventListener('click', function() {
-                console.log(this.closest);
-                const productName = this.closest('.menu-item-info').querySelector('.menu-item-title').textContent;
-
-                // 製品名に対応するモデルパスを取得
-                const modelPath = productModels[productName];
-
-                if (modelPath) {
-                    // モデルを読み込んで表示
-                    loadAndDisplayModel(modelPath);
-                } else {
-                    alert(`${productName}の3Dモデルは利用できません。`);
-                }
-            });
-        });
         viewItemPanels.forEach(panel => {
             panel.addEventListener('click', function() {
                 const productName = this.querySelector('.menu-item-title').textContent;
