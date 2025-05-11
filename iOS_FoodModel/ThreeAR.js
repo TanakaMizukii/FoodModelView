@@ -3,8 +3,10 @@ import { CSS2DRenderer, CSS2DObject } from "three/addons/renderers/CSS2DRenderer
 
 let renderer, camera, scene;
 let arToolkitContext, arToolkitSource, arMarkerControls;
+let smoothedControls
 
 let markerRoot;
+let smoothedRoot;
 
 let nowModel = null;
 let detailDiv = null;
@@ -52,12 +54,21 @@ async function init() {
     });
 
     markerRoot = new THREE.Group();
-    scene.add(markerRoot);
+    // smoothed用のグループを作成
+    smoothedRoot = new THREE.Group();
+    scene.add(markerRoot, smoothedRoot);
 
     // THREEx.ArMarkerControlsでは使用するマーカーの種類と、そのURLを指定
     arMarkerControls = new THREEx.ArMarkerControls(arToolkitContext, markerRoot, {
         type: 'pattern',
         patternUrl: './data/pattern-qrcode_www.ryusei2024mymake.com (1).patt',
+    });
+
+    // smoothedControlを追加
+    smoothedControls = new THREEx.ArSmoothedControls(smoothedRoot, {
+        lerpPosition: .4,
+        lerpQuaternion: .3,
+        lerpScale: 1,
     });
 
     // それぞれの初期化を行う
@@ -98,7 +109,7 @@ async function init() {
 window.loadModel = async function (modelPath, modelDetail) {
     try {
         if (nowModel) {
-            markerRoot.remove(nowModel);
+            smoothedRoot.remove(nowModel);
             // 変更する前に今まで映していたモデルのメモリの解放
             disposeModel(nowModel);
 
@@ -119,7 +130,7 @@ window.loadModel = async function (modelPath, modelDetail) {
         model.scale.set(8, 8, 8);
         // 詳細情報の表示状態をboolean値で設定
         model.userData.isDetail = true;
-        markerRoot.add(model);
+        smoothedRoot.add(model);
         // レイキャスト用の配列に保存
         objectList.push(model);
         nowModel = model;
@@ -247,6 +258,9 @@ function animate() {
     if (arToolkitSource.ready) {
         arToolkitContext.update(arToolkitSource.domElement);
     }
+
+    // 追加
+    smoothedControls.update(markerRoot);
 
     renderer.render(scene, camera);
     labelRenderer.render(scene, camera);
