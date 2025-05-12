@@ -1,8 +1,14 @@
 今までメニューは文字(1次元)、写真(2次元)、動画(2.5次元)しか存在していない。
 そのため3次元の立体的な情報を用いることでより来店客に商品を解りやすく伝えられるようにしたいと考え作成したプロダクトになります。
 
-https://tomatokoala34.sakura.ne.jp/　←Android用
-https://www.ryusei2024mymake.com/　←iPhone用
+https://tomatokoala34.sakura.ne.jp/　
+↑Android用
+https://www.ryusei2024mymake.com/
+↑iPhone用
 
 AR.jsの仕様によりiPhoneでは赤っぽく表現がされてしまう状況になっています。
 そのため可能であればAndroidでの体験をおすすめしています。
+
+また、どちらもUIの作成は未完成なので、
+❍Androidの場合は開いて[START AR]を押したら表面に白い円が出るまでゆっくりとスマホを動かし、表示されたら一度止まってください。
+❍iPhoneの場合はマーカー認識なのでカメラを許可して起動したら、マーカーを読み取ってください。
