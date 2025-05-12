@@ -14,5 +14,5 @@ AR.jsの仕様によりiPhoneでは赤っぽく表現がされてしまう状況
 ❍Androidの場合は開いて[START AR]を押したら表面に白い円が出るまでゆっくりとスマホを動かし、表示されたら一度止まってください。
 
 ❍iPhoneの場合はマーカー認識なので
-    ①imageフォルダに有るpattern-qrcode_www.ryusei2024mymake.com.pngを印刷または画面に表示してください。
+    ①imageフォルダに有るpattern-qrcode_www.ryusei2024mymake.com.png　を印刷または画面に表示してください。
     ②URLを押しカメラを許可して起動したら、マーカーを読み取ってモデルの表示を行ってください。
