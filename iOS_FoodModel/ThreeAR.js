@@ -29,12 +29,14 @@ async function init() {
         alpha: true,
         antialias: false,
     });
+    renderer.physicallyCorrectLight = true;
+    renderer.outputEncoding = THREE.sRGBEncoding;
+    renderer.toneMapping = THREE.CineonToneMapping;
 
     scene = new THREE.Scene();
     camera = new THREE.PerspectiveCamera();
 
-    const light = new THREE.HemisphereLight(0xffffff, 0xbbbbff, 3);
-    light.position.set( 0, 1, 0);
+    const light = new THREE.AmbientLight(0xffffff, 1);
     scene.add(light);
 
     // カメラのキャリブレーションと利用するマークの指定、画面のリサイズ処理
@@ -127,7 +129,7 @@ window.loadModel = async function (modelPath, modelDetail) {
         const loader = new GLTFLoader();
         const objects = await loader.loadAsync(modelPath);
         const model = objects.scene;
-        model.scale.set(8, 8, 8);
+        model.scale.set(10, 10, 10);
         // 詳細情報の表示状態をboolean値で設定
         model.userData.isDetail = true;
         smoothedRoot.add(model);
