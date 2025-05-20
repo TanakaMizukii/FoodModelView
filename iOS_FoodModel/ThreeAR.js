@@ -106,6 +106,21 @@ async function init() {
     window.addEventListener('resize', handleResize, {
         passive: true,
     });
+
+    // マーカー案内用UIの表示
+    const guideMarker = document.getElementById('guideMarker');
+    let lookedNum = 0;
+    if (guideMarker) {
+        guideMarker.classList.add('visible');
+    }
+
+    // マーカーを検知すると一度だけ発動させる関数を作成
+    arMarkerControls.addEventListener('markerFound', () => {
+        if (lookedNum == 0) {
+            guideMarker.classList.remove('visible');
+            lookedNum += 1;
+        };
+    });
 }
 
 window.loadModel = async function (modelPath, modelDetail) {
