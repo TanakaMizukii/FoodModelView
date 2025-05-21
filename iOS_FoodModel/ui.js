@@ -140,7 +140,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // 画面サイズによってメニューの状態を初期化
     function initMenuBasedOnScreenSize() {
-        isMobileView = window.innerWidth < 768;
+        const body = document.querySelector('body');
+        isMobileView = body.offsetWidth < 768;
+        console.log(isMobileView);
 
         if (isMobileView) {
             // モバイル表示: 下部からスライドアップ
@@ -231,7 +233,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // タッチ開始時のX座標も記録（右から左へのスワイプ用）
         startX = e.touches[0].clientX;
-    });
+    },{passive: true});
 
     menuContainer.addEventListener('touchmove', function(e) {
         // タブナビゲーション内でのタッチムーブは通常のスクロールを許可
@@ -277,7 +279,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 toggleMenuState(false);
             }
         }
-    });
+    },{passive: true});
 
     // タブナビゲーションのスクロール処理（タッチデバイス用）
     let isScrolling = false;
@@ -293,20 +295,20 @@ document.addEventListener('DOMContentLoaded', function() {
 
         const currentX = e.touches[0].clientX;
         const scrollDiff = scrollStartX - currentX;
-        
+
         tabNavigation.scrollLeft += scrollDiff;
         scrollStartX = currentX;
     }, { passive: true });
-    
+
     tabNavigation.addEventListener('touchend', function() {
         isScrolling = false;
     }, { passive: true });
-    
+
     // タブナビゲーションのマウススクロール処理（デスクトップ用）
     let isDragging = false;
     let dragStartX;
     let scrollLeft;
-    
+
     tabNavigation.addEventListener('mousedown', function(e) {
         isDragging = true;
         dragStartX = e.pageX;
@@ -319,23 +321,23 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }, 150);
     });
-    
+
     document.addEventListener('mousemove', function(e) {
         if (!isDragging) return;
-    
+
         const x = e.pageX;
         const walk = (x - dragStartX) * 1.5; // スクロール倍率を調整
         tabNavigation.scrollLeft = scrollLeft - walk;
     });
-    
+
     document.addEventListener('mouseup', function() {
         if (!isDragging) return;
-        
+
         isDragging = false;
         tabNavigation.style.cursor = 'grab';
         tabNavigation.style.userSelect = '';
     });
-    
+
     // スクロール中にカーソルがナビゲーションから外れた場合も対応
     document.addEventListener('mouseleave', function() {
         if (isDragging) {
@@ -344,7 +346,7 @@ document.addEventListener('DOMContentLoaded', function() {
             tabNavigation.style.userSelect = '';
         }
     });
-    
+
     // タブ切り替え機能
     const tabButtons = document.querySelectorAll('.tab-btn');
 

@@ -109,18 +109,14 @@ async function init() {
 
     // マーカー案内用UIの表示
     const guideMarker = document.getElementById('guideMarker');
-    let lookedNum = 0;
     if (guideMarker) {
         guideMarker.classList.add('visible');
     }
 
-    // マーカーを検知すると一度だけ発動させる関数を作成
+    // 一度マーカーを検知するとガイドを終了
     arMarkerControls.addEventListener('markerFound', () => {
-        if (lookedNum == 0) {
-            guideMarker.classList.remove('visible');
-            lookedNum += 1;
-        };
-    });
+        guideMarker.classList.remove('visible');
+    },{ once: true });
 }
 
 window.loadModel = async function (modelPath, modelDetail) {
