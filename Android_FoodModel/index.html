@@ -12,14 +12,49 @@
             }
         }
     </script>
+    <link rel="stylesheet" href="style.css">
     <script src="ui.js"></script>
     <script type="module" src="Three.js"></script>
-    <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <!-- 初期スタート画面 -->
+    <div id="start-overlay" class="start-overlay">
+        <div id="status-text" class="status-text">ARエクスペリエンスを開始</div>
+        <button id="start-button" class="start-button">AR体験を始める</button>
+        <div id="loading-spinner" class="loading-spinner" style="display: none;"></div>
+    </div>
+
+    <!-- AR中のUI -->
+    <div id="ar-ui" class="ar-ui">
+        <div>AR Mode Active</div>
+        <div>商品の選択可能</div>
+    </div>
+
+    <!-- 平面検出待ち画面 -->
+    <div id="scanning-overlay" class="scanning-overlay">
+        <div class="scanning-icon"></div>
+        <div class="scanning-text">平面を検出しています</div>
+        <div class="phone-animation"></div>
+        <div class="scanning-instruction">
+            スマートフォンをゆっくりと<br>
+            左右に動かして平面を<br>
+            スキャンしてください
+        </div>
+    </div>
+
+    <!-- AR退出ボタン -->
+    <button id="exit-button" class="exit-button">AR終了</button>
+
+    <!-- ローディングインジケーター -->
+    <div id="loading" class="loading-overlay">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">モデルを読み込み中...</div>
+    </div>
+
     <div id="container">
         <canvas id="myCanvas"></canvas>
     </div>
+
     <!-- メニューコンテナー -->
     <div class="menu-container collapsed" id="menuContainer">
         <div class="menu-toggle" id="menuToggle">
@@ -160,12 +195,5 @@
     <div class="menu-toggle-desktop" id="menuToggleDesktop">
         <span id="toggleText">メニューを開く</span>
     </div>
-    
-    <!-- ローディングインジケーター -->
-    <div id="loading" class="loading-overlay">
-        <div class="loading-spinner"></div>
-        <div class="loading-text">モデルを読み込み中...</div>
-    </div>
-    
 </body>
 </html>
