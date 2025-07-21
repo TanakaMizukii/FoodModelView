@@ -1,5 +1,4 @@
 import * as THREE from "three";
-import { ARButton } from "three/addons/webxr/ARButton.js";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { CSS2DRenderer, CSS2DObject } from "three/addons/renderers/CSS2DRenderer.js";
 
@@ -16,6 +15,8 @@ let raycaster;
 // レイキャストで反応させたい物を格納しておくリスト
 let objectList = [];
 
+let currentSession;
+
 // 表示するオブジェクトのレイヤーの番号を格納する変数
 let layerNum = 1;
 
@@ -23,6 +24,48 @@ let layerNum = 1;
 let hitTestSource = null;
 // ヒットテストをリクエストしていないかどうかを確認するための変数
 let hitTestSourceRequested = false;
+
+// ガイド用DOM要素の取得
+const startOverlay = document.getElementById('start-overlay');
+const startButton = document.getElementById('start-button');
+const statusText = document.getElementById('status-text');
+const loadingSpinner = document.getElementById('loading-spinner');
+const arUI = document.getElementById('ar-ui');
+const scanningOverlay = document.getElementById('scanning-overlay');
+const exitButton = document.getElementById('exit-button');
+const menuContainer = document.getElementById('menuContainer');
+
+// WebXR対応自動確認
+autoStart();
+async function autoStart() {
+    const isArSupported = navigator.xr && (await navigator.xr.isSessionSupported('immersive-ar'));
+    console.log(isArSupported);
+
+    if (isArSupported) {
+        startButton.addEventListener('click', init);
+        exitButton.addEventListener('click', exitAR);
+    } else {
+        showError(`AR権限の確認に失敗しました<br><small>ブラウザの設定をご確認ください</small>`);
+    }
+};
+
+function exitAR() {
+    if (currentSession) {
+        currentSession.end();
+    }
+}
+
+function showError(message) {
+    startOverlay.innerHTML = `
+        <div class="error-message">
+            <h3>エラー</h3>
+            <p>${message}</p>
+            <button onclick="location.reload()" style="background: white; color: #333; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; margin-top: 10px;">
+                再試行
+            </button>
+        </div>
+    `;
+}
 
 async function init() {
     const width = window.innerWidth;
@@ -47,18 +90,9 @@ async function init() {
     renderer.setAnimationLoop(animate);
     renderer.xr.enabled = true;
 
-    // rendererのオプションとして{requiredFeatures: ['hit-test']}を記述して
-    // 「ユーザーの周囲の平面を検出する」機能をオンにしているこれによりframe.getHitTestResults()を有効化
-    const arButton = (ARButton.createButton(renderer, {
-        requiredFeatures: ['hit-test'],
-        optionalFeatures: ['dom-overlay', 'dom-overlay-for-handle-ar' ], // モバイルでのUIの実装のために記述
-        domOverlay: { root: document.body } // どの要素をオーバーレイ領域として扱うかを指定
-    }));
-    document.body.appendChild( arButton );
-
     // レティクルの作成
     reticle = new THREE.Mesh(
-        new THREE.RingGeometry(0.05, 0.07, 32).rotateX( -Math.PI / 2),
+        new THREE.RingGeometry(0.05, 0.065, 32).rotateX( -Math.PI / 2),
         new THREE.MeshBasicMaterial(),
     );
     // レティクルの交差情報の自動更新をオフに
@@ -78,6 +112,35 @@ async function init() {
     raycaster = new THREE.Raycaster();
     labelRenderer.domElement.addEventListener('click', handleClick);
 
+    startARSession();
+    // ARButtonの代わりをここに作成
+    async function startARSession() {
+        try {
+            updateStatus('ARセッションを開始中...', true);
+
+            const sessionInit = {
+                requiredFeatures: ['local'],
+                optionalFeatures: ['dom-overlay', 'hit-test'],
+                domOverlay: {root: document.body}
+            };
+
+            // セッション開始時の処理
+            const session = await navigator.xr.requestSession('immersive-ar', sessionInit);
+            currentSession = session;
+            renderer.xr.setReferenceSpaceType('local');
+            renderer.xr.setSession(session);
+
+            // UIの更新
+            hideStartOverlay();
+            showScanningOverlay();
+            console.log('ARセッション開始成功')
+
+        } catch (error) {
+            console.error('ARセッション開始エラー:', error);
+            showError('ARセッションの開始に失敗しました: ' + error.message);
+        }
+    };
+
     window.addEventListener('resize', onResize);
 }
 
@@ -92,6 +155,17 @@ window.loadModel = async function(modelPath, modelDetail) {
         }
         console.log(modelDetail);
 
+        // 詳細情報を設定
+        detailDiv = document.createElement('div');
+        detailDiv.className = 'detail';
+        detailDiv.textContent = modelDetail;
+
+        // 作成したdiv情報をオブジェクトとして作成
+        const detail = new CSS2DObject(detailDiv);
+        detail.position.set(0.01, 0.08, -0.03);
+        detail.center.set(0, 1);
+        detail.layers.set(layerNum);
+
         // 今回表示するモデルの読み込み
         const loader = new GLTFLoader();
         const objects = await loader.loadAsync(modelPath);
@@ -103,20 +177,9 @@ window.loadModel = async function(modelPath, modelDetail) {
         reticle.matrix.decompose(clone.position, clone.quaternion, clone.scale);
         // cloneも同じレイヤーに所属させるために設定
         clone.layers.set(layerNum);
+        clone.add(detail);
         scene.add(clone);
         objectList.push(clone);
-
-        // 詳細情報を設定
-        detailDiv = document.createElement('div');
-        detailDiv.className = 'detail';
-        detailDiv.textContent = modelDetail;
-
-        // 作成したdiv情報をオブジェクトとして作成
-        const detail = new CSS2DObject(detailDiv);
-        detail.position.set(0.01, 0.08, -0.03);
-        detail.center.set(0, 1);
-        detail.layers.set(layerNum);
-        clone.add(detail);
 
         // ローディングインジケーターを非表示
         if (loadingOverlay) {
@@ -180,8 +243,6 @@ function handleClick(event) {
     };
 }
 
-init();
-
 // 初回オブジェクト表示に使用する変数を作成
 let reticleShowTime = null;  // visible になった瞬間の timestamp を記録
 let viewNum = 0; // 表示回数を格納
@@ -203,10 +264,44 @@ function animate(timestamp, frame) {
             hitTestSourceRequested = true;
 
             session.addEventListener('end', function() {
+                hitTestSource.cancel();
                 hitTestSource = null;
                 hitTestSourceRequested = false;
+                scene.remove(reticle);
                 reticleShowTime = null;
                 viewNum = 0;
+
+                const label = document.getElementById('label');
+                const parent = label.parentNode;
+                parent.removeChild(label);
+
+                // オブジェクトを削除
+                const objectsToRemove = [];
+                scene.children.forEach(child => {
+                    // レティクル、ライト、は残す
+                    if (child !== reticle && child !== light && child ) {
+                        // GLTFから読み込まれたオブジェクトや他の追加オブジェクトを削除対象に
+                        objectsToRemove.push(child);
+                    }
+                });
+                objectsToRemove.forEach(obj => {
+                    scene.remove(obj);
+                    // メモリリークを防ぐためのクリーンアップ
+                    if (obj.geometry) obj.geometry.dispose();
+                    if (obj.material) {
+                        if (Array.isArray(obj.material)) {
+                            obj.material.forEach(material => material.dispose());
+                        } else {
+                            obj.material.dispose();
+                        }
+                    }
+                });
+                // UIの復元
+                hideARUI();
+                hideScanningOverlay();
+                hideMenuContainer();
+                showStartOverlay();
+                resetUI();
             });
         };
         if ( hitTestSource ) {
@@ -221,6 +316,10 @@ function animate(timestamp, frame) {
                 reticle.matrix.fromArray(
                     hit.getPose(rendererReferenceSpace).transform.matrix,
                 );
+                // ガイドを非表示
+                hideScanningOverlay();
+                showARUI();
+                showMenuContainer();
             } else {
                 // もしヒットテストに失敗したらreticleを非表示に
                 reticle.visible = false;
@@ -254,4 +353,52 @@ function onResize() {
 
     renderer.setSize(width, height);
     labelRenderer.setSize(width, height);
+}
+
+// UI更新関数
+function updateStatus(message, showSpinner = false) {
+    statusText.textContent = message;
+    loadingSpinner.style.display = showSpinner ? 'block' : 'none';
+}
+
+function showMenuContainer() {
+    menuContainer.style.display = 'block';
+}
+function hideMenuContainer() {
+    menuContainer.style.display = 'none';
+}
+
+function hideStartOverlay() {
+    startOverlay.style.display = 'none';
+}
+
+function showStartOverlay() {
+    startOverlay.style.display = 'flex';
+}
+
+function showARUI() {
+    arUI.style.display = 'block';
+    exitButton.style.display = 'block';
+}
+
+function hideARUI() {
+    arUI.style.display = 'none';
+    exitButton.style.display = 'none';
+}
+
+function showScanningOverlay() {
+    scanningOverlay.style.display = 'flex';
+}
+
+function hideScanningOverlay() {
+    scanningOverlay.style.display = 'none';
+}
+function resetUI() {
+    startOverlay.innerHTML = `
+    <div id="status-text" class="status-text">ARエクスペリエンスを開始</div>
+    <button id="start-button" class="start-button">AR体験を始める</button>
+    <div id="loading-spinner" class="loading-spinner" style="display: none;"></div>
+    `;
+    // 新しいボタンにイベントリスナーを再設定
+    document.getElementById('start-button').addEventListener('click', init);
 }
