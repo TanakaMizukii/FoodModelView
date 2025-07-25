@@ -125,6 +125,12 @@ document.addEventListener('DOMContentLoaded', function() {
             'model': './models/タン先1人前.glb',
             'description': '歯ごたえのあるタン先。噛むほどに旨味が出ます。',
             'price': '900 (税込990)', // 文字列形式に変更 (税込不明)
+        },
+        'すじ焼き':{
+            'image': './images/すじ焼き（味付き）.PNG',
+            'model': './models/sujiyaki_comp.glb',
+            'description': 'ハラミから出るすじをご堪能いただけます。',
+            'price': '900 (税込990)', // 文字列形式に変更 (税込不明)
         }
     };
 
