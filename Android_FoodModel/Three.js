@@ -1,6 +1,9 @@
 import * as THREE from "three";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { CSS2DRenderer, CSS2DObject } from "three/addons/renderers/CSS2DRenderer.js";
+import { KTX2Loader } from 'three/addons/loaders/KTX2Loader.js';
+import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
+await MeshoptDecoder.ready;
 
 let scene, camera, light, renderer;
 
@@ -12,6 +15,9 @@ let detailNum = 0;
 let labelRenderer;
 let mouse;
 let raycaster;
+
+let loader;
+let ktx2;
 // レイキャストで反応させたい物を格納しておくリスト
 let objectList = [];
 
@@ -90,6 +96,15 @@ async function init() {
     renderer.setAnimationLoop(animate);
     renderer.xr.enabled = true;
 
+    // モデルデータを読み込むためのローダーを作成
+    // KTX2を準備
+    ktx2 = new KTX2Loader();
+    ktx2.setTranscoderPath('./basis/');
+    ktx2.detectSupport(renderer);
+    loader = new GLTFLoader();
+    loader.setKTX2Loader(ktx2);
+    loader.setMeshoptDecoder(MeshoptDecoder);
+
     // レティクルの作成
     reticle = new THREE.Mesh(
         new THREE.RingGeometry(0.05, 0.065, 32).rotateX( -Math.PI / 2),
@@ -167,7 +182,6 @@ window.loadModel = async function(modelPath, modelDetail) {
         detail.layers.set(layerNum);
 
         // 今回表示するモデルの読み込み
-        const loader = new GLTFLoader();
         const objects = await loader.loadAsync(modelPath);
         const model = objects.scene;
         const clone = model.clone(true);

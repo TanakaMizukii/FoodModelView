@@ -1,5 +1,7 @@
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { CSS2DRenderer, CSS2DObject } from "three/addons/renderers/CSS2DRenderer.js"
+import { KTX2Loader } from 'three/addons/loaders/KTX2Loader.js';
+import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
 
 let renderer, camera, scene;
 let arToolkitContext, arToolkitSource, arMarkerControls;
@@ -11,6 +13,9 @@ let smoothedRoot;
 let nowModel = null;
 let detailDiv = null;
 let detailNum = 0;
+
+let loader;
+let ktx2;
 
 // マウスの情報を入れる変数を作成
 let mouse;
@@ -86,6 +91,15 @@ async function init() {
         setTimeout(handleResize, 400); // リサイズイベントを発火
     });
 
+    // モデルデータを読み込むためのローダーを作成
+    // KTX2を準備
+    ktx2 = new KTX2Loader();
+    ktx2.setTranscoderPath('https://cdn.jsdelivr.net/npm/three@0.127.0/examples/js/libs/basis/');
+    ktx2.detectSupport(renderer);
+    loader = new GLTFLoader();
+    loader.setKTX2Loader(ktx2);
+    loader.setMeshoptDecoder(MeshoptDecoder);
+
     // 詳細情報表示用のRendererを作成
     labelRenderer = new CSS2DRenderer();
     labelRenderer.setSize(window.innerWidth, window.innerHeight);
@@ -137,7 +151,6 @@ window.loadModel = async function (modelPath, modelDetail) {
         }
 
         // 今回表示するモデルの読み込み
-        const loader = new GLTFLoader();
         const objects = await loader.loadAsync(modelPath);
         const model = objects.scene;
         model.scale.set(10, 10, 10);
