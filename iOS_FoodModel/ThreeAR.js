@@ -115,7 +115,7 @@ async function init() {
     labelRenderer.domElement.addEventListener('click', handleClick);
 
     // 初回モデル表示の実装
-    await loadModel('./models/Tun_of2.glb', 'タンの中でも上質な部分。レモンで食べると \n程よい油が口の中に広がります')
+    await loadModel('./models/volume_test_row_comp2.glb', 'タンの中でも上質な部分。レモンで食べると \n程よい油が口の中に広がります')
 
     window.addEventListener('resize', handleResize, {
         passive: true,
@@ -153,7 +153,7 @@ window.loadModel = async function (modelPath, modelDetail) {
         // 今回表示するモデルの読み込み
         const objects = await loader.loadAsync(modelPath);
         const model = objects.scene;
-        model.scale.set(10, 10, 10);
+        model.scale.set(5, 5, 5);
         // 詳細情報の表示状態をboolean値で設定
         model.userData.isDetail = true;
         smoothedRoot.add(model);

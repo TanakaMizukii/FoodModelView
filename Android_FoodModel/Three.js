@@ -191,6 +191,7 @@ window.loadModel = async function(modelPath, modelDetail) {
         reticle.matrix.decompose(clone.position, clone.quaternion, clone.scale);
         // cloneも同じレイヤーに所属させるために設定
         clone.layers.set(layerNum);
+        clone.scale.set(0.8, 0.8, 0.8);
         clone.add(detail);
         scene.add(clone);
         objectList.push(clone);
@@ -347,7 +348,7 @@ function animate(timestamp, frame) {
             }
             // reticleが見えてから2秒以上経ったらモデル表示を一度だけ発火
             if (viewNum === 0  && reticleShowTime !== null && timestamp - reticleShowTime > 1500) {
-                window.loadModel('./models/Tun_of2.glb', 'タンの中の上質な部分を選別 程よい油が口の中に広がります');
+                window.loadModel('./models/volume_test.glb', 'タンの中の上質な部分を選別 程よい油が口の中に広がります');
                 viewNum = 1;
                 reticleShowTime = null;
             }
