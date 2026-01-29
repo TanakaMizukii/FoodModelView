@@ -84,7 +84,7 @@ export async function createThreeApp(container, width, height)
             // Load model
             const gltf = await loader.loadAsync(modelPath);
             const model = gltf.scene;
-            model.scale.set(5, 5, 5);
+            model.scale.set(100, 100, 100);
             model.userData.isDetail = true;
 
             // Place model at reticle position

@@ -70,15 +70,11 @@ async function demo(media)
     reticle.scale.set(100, 100, 100);
     scene.add(reticle);
 
-    // const axes = new THREE.AxesHelper(0.2);
-    // axes.position.set(0, 0, -10);
-    // axes.scale.set(100, 100, 100);
-    // scene.add(axes);
-
     // デバッグ用: XYZ軸ヘルパーをレティクルに追加
     // 赤=X, 緑=Y, 青=Z
     const axesHelper = new THREE.AxesHelper(0.1);
     axesHelper.scale.set(100, 100, 100); // レティクルのスケールを打ち消す
+
     reticle.add(axesHelper);
 
     Stats.add('total');
@@ -138,7 +134,7 @@ async function demo(media)
                 applyPose(pose, camera.quaternion, camera.position);
 
                 // 平面検出を0.2秒に1回実行
-                if (now - lastPlaneTime > 200) {
+                if (now - lastPlaneTime > 300) {
                     lastPlaneTime = now;
                     const planeMatrix = alva.findPlane();
                     if (planeMatrix)
