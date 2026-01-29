@@ -63,12 +63,17 @@ async function demo(media)
 
     // 平面可視化用レティクルの作成（水平平面に表示するためX軸で-90度回転）
     const reticle = new THREE.Mesh(
-        new THREE.RingGeometry(0.05, 0.065, 32),
-        new THREE.MeshBasicMaterial(),
+        new THREE.RingGeometry(0.05, 0.065, 32).rotateX( -Math.PI / 2),
+        new THREE.MeshBasicMaterial({side: THREE.DoubleSide}),
     );
     reticle.visible = false;
     reticle.scale.set(100, 100, 100);
     scene.add(reticle);
+
+    // const axes = new THREE.AxesHelper(0.2);
+    // axes.position.set(0, 0, -10);
+    // axes.scale.set(100, 100, 100);
+    // scene.add(axes);
 
     // デバッグ用: XYZ軸ヘルパーをレティクルに追加
     // 赤=X, 緑=Y, 青=Z
@@ -132,8 +137,8 @@ async function demo(media)
             {
                 applyPose(pose, camera.quaternion, camera.position);
 
-                // 平面検出を0.5秒に1回実行
-                if (now - lastPlaneTime > 500) {
+                // 平面検出を0.2秒に1回実行
+                if (now - lastPlaneTime > 200) {
                     lastPlaneTime = now;
                     const planeMatrix = alva.findPlane();
                     if (planeMatrix)
@@ -187,14 +192,47 @@ async function demo(media)
     }, 30);
 }
 
-// 平面マトリックスをTHREE.js座標系に変換する関数
-// AlvaAR: Y-down, Z-forward → Three.js: Y-up, Z-backward
 function applyPlaneMatrix(matrix, mesh) {
     const m = new THREE.Matrix4().fromArray(matrix);
-    const r = new THREE.Quaternion().setFromRotationMatrix(m);
-    const t = new THREE.Vector3(matrix[12], matrix[13], matrix[14]);
 
-    // AlvaAR -> THREE.js 座標系変換（Y軸とZ軸を反転）
-    mesh.quaternion.set(-r.x, r.y, r.z, r.w);
-    mesh.position.set(t.x, -t.y, -t.z);
+    // 回転と位置を分解
+    const position = new THREE.Vector3();
+    const rotation = new THREE.Quaternion();
+    const scale = new THREE.Vector3();
+    m.decompose(position, rotation, scale);
+
+    // ----------------------------
+    // ① 座標系変換（AlvaAR → Three.js）
+    // ----------------------------
+    const convertedRotation = new THREE.Quaternion(
+        -rotation.x,   // Y-down → Y-up
+        rotation.y,
+        rotation.z,
+        rotation.w
+    );
+
+    const convertedPosition = new THREE.Vector3(
+        position.x,
+        -position.y,
+        -position.z
+    );
+
+    // ② 補正回転（X:-90°, Z:-90°）
+    const fixRotX = new THREE.Quaternion()
+        .setFromAxisAngle(new THREE.Vector3(1, 0, 0), Math.PI);
+
+    const fixRotY = new THREE.Quaternion()
+        .setFromAxisAngle(new THREE.Vector3(0, 0, 0), -Math.PI / 2);
+
+    const fixRotZ = new THREE.Quaternion()
+        .setFromAxisAngle(new THREE.Vector3(0, 0, 1), -Math.PI / 2);
+
+    // 回転合成（順序が超重要）
+    convertedRotation.multiply(fixRotX);
+    convertedRotation.multiply(fixRotY);
+    convertedRotation.multiply(fixRotZ);
+
+    // ③ 反映
+    mesh.position.copy(convertedPosition);
+    mesh.quaternion.copy(convertedRotation);
 }
