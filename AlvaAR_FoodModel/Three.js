@@ -84,12 +84,13 @@ export async function createThreeApp(container, width, height)
             // Load model
             const gltf = await loader.loadAsync(modelPath);
             const model = gltf.scene;
-            model.scale.set(100, 100, 100);
+            model.scale.set(90, 90, 90);
             model.userData.isDetail = true;
 
             // Place model at reticle position
             model.position.copy(reticle.position);
             model.quaternion.copy(reticle.quaternion);
+            model.rotateX( Math.PI / 2);
 
             scene.add(model);
             objectList.push(model);
