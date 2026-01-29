@@ -61,14 +61,20 @@ async function demo(media)
     // カメラ映像キャンバスを3Dモデルキャンバスより前へ置く
     container.insertBefore(canvas, renderer.domElement);
 
-    // 平面可視化用レティクルの作成
+    // 平面可視化用レティクルの作成（水平平面に表示するためX軸で-90度回転）
     const reticle = new THREE.Mesh(
-        new THREE.RingGeometry(0.05, 0.065, 32).rotateY( Math.PI / 20),
+        new THREE.RingGeometry(0.05, 0.065, 32),
         new THREE.MeshBasicMaterial(),
     );
     reticle.visible = false;
     reticle.scale.set(100, 100, 100);
     scene.add(reticle);
+
+    // デバッグ用: XYZ軸ヘルパーをレティクルに追加
+    // 赤=X, 緑=Y, 青=Z
+    const axesHelper = new THREE.AxesHelper(0.1);
+    axesHelper.scale.set(100, 100, 100); // レティクルのスケールを打ち消す
+    reticle.add(axesHelper);
 
     Stats.add('total');
     Stats.add('video');
@@ -100,6 +106,9 @@ async function demo(media)
     let reticleShowTime = null;  // reticle.visible になった瞬間のタイムスタンプ
     let viewNum = 0;             // 表示回数
 
+    // 平面認識の頻度制限（0.5秒に1回）
+    let lastPlaneTime = 0;
+
     onFrame(() =>
     {
         const now = performance.now();
@@ -123,13 +132,16 @@ async function demo(media)
             {
                 applyPose(pose, camera.quaternion, camera.position);
 
-                // 平面検出を実行
-                const planeMatrix = alva.findPlane();
-                if (planeMatrix)
-                {
-                    // 検出した平面のマトリックスを適用（座標系変換込み）
-                    applyPlaneMatrix(planeMatrix, reticle);
-                    reticle.visible = true;
+                // 平面検出を0.5秒に1回実行
+                if (now - lastPlaneTime > 500) {
+                    lastPlaneTime = now;
+                    const planeMatrix = alva.findPlane();
+                    if (planeMatrix)
+                    {
+                        // 検出した平面のマトリックスを適用（座標系変換込み）
+                        applyPlaneMatrix(planeMatrix, reticle);
+                        reticle.visible = true;
+                    }
                 }
                 // ポイントの表示
                 dots = alva.getFramePoints();
@@ -175,13 +187,14 @@ async function demo(media)
     }, 30);
 }
 
-    // 平面マトリックスをTHREE.js座標系に変換する関数
-    function applyPlaneMatrix(matrix, mesh) {
-        const m = new THREE.Matrix4().fromArray(matrix);
-        const r = new THREE.Quaternion().setFromRotationMatrix(m);
-        const t = new THREE.Vector3(matrix[12], matrix[13], matrix[14]);
+// 平面マトリックスをTHREE.js座標系に変換する関数
+// AlvaAR: Y-down, Z-forward → Three.js: Y-up, Z-backward
+function applyPlaneMatrix(matrix, mesh) {
+    const m = new THREE.Matrix4().fromArray(matrix);
+    const r = new THREE.Quaternion().setFromRotationMatrix(m);
+    const t = new THREE.Vector3(matrix[12], matrix[13], matrix[14]);
 
-        // AlvaAR -> THREE.js 座標系変換
-        mesh.quaternion.set(-r.x, r.y, r.z, r.w);
-        mesh.position.set(t.x, -t.y, -t.z);
-    }
+    // AlvaAR -> THREE.js 座標系変換（Y軸とZ軸を反転）
+    mesh.quaternion.set(-r.x, r.y, r.z, r.w);
+    mesh.position.set(t.x, -t.y, -t.z);
+}
