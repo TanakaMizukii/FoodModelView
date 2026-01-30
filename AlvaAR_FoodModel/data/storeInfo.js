@@ -8,11 +8,11 @@ const storeInfo = [
         left_bottom: 'カルビ盛り切り抜き.png',
         menuDisplayMode: 'standard',
         firstEnvironment: {
-            hdrPath: '/hdr/kaishu/',
+            hdrPath: './hdr/kaishu/',
             hdrFile: 'kaisyu_73_small.hdr',
             defaultModel: {
                 name: 'カルビ盛り',
-                path: '/models/kaishu/calbee_set_comp.glb',
+                path: './models/kaishu/calbee_set_comp.glb',
                 detail: '特上カルビ・上カルビ・並みカルビ・切り落としカルビがワンプレートでまとめて食べられます！！',
                 price: '2,400 (税込 2,640)',
             },
@@ -37,11 +37,11 @@ const storeInfo = [
         left_bottom: null,
         menuDisplayMode: 'compact',
         firstEnvironment: {
-            hdrPath: '/hdr/denden/',
+            hdrPath: './hdr/denden/',
             hdrFile: 'dndn_2.1_small.hdr',
             defaultModel: {
                 name: '2種の鶏唐コンビ丼（特盛）',
-                path: '/models/denden/chicken_combo_large_comp.glb',
+                path: './models/denden/chicken_combo_large_comp.glb',
                 detail: '2種類の鶏唐揚げが通常盛りの倍の量で楽しめます！。',
                 price: '税込み:1250',
             },

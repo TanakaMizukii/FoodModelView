@@ -32,6 +32,8 @@ setTimeout(() =>
     start.addEventListener('click', () =>
     {
         overlay.remove();
+        document.getElementById('menuContainer').classList.remove('hidden');
+        document.getElementById('menuToggleDesktop').classList.remove('hidden');
         Camera.Initialize(config).then(media => demo(media)).catch(error => alert('Camera ' + error));
     }, { once: true });
 }, splashFadeTime);

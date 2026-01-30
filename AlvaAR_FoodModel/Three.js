@@ -46,7 +46,7 @@ export async function createThreeApp(container, width, height)
 
     // Model loader setup
     const ktx2 = new KTX2Loader();
-    ktx2.setTranscoderPath('../basis');
+    ktx2.setTranscoderPath('./basis/');
     ktx2.detectSupport(renderer);
     const loader = new GLTFLoader();
     loader.setKTX2Loader(ktx2);
