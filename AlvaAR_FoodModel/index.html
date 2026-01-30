@@ -25,6 +25,18 @@
             <script type="module" src="./index.js"></script>
         </div>
 
+    <!-- AR中のUI -->
+    <div id="ar-ui" class="ar-ui hidden">
+        <div>ARモード動作中</div>
+        <div>商品の選択可能</div>
+    </div>
+
+    <button id="exit-button" class="send-viewer-button hidden" onclick="onExit()">3Dビュワーへ</button>
+    <div id="clear-objects" class="clear-objects hidden">
+        <button id="clear-button" class="clear-button" onclick="onClear()">♻️</button>
+        <div id="clear-text" class="clear-text">モデルクリア</div>
+    </div>
+
     <!-- メニューコンテナー -->
     <div class="menu-container collapsed hidden" id="menuContainer">
         <div class="menu-toggle" id="menuToggle">

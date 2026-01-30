@@ -66,8 +66,9 @@ export async function createThreeApp(container, width, height)
      * @param {string} modelPath
      * @param {string} modelDetail
      * @param {THREE.Mesh} reticle
+     * @param {number} scale
      */
-    async function loadModel(modelPath, modelDetail, reticle) {
+    async function loadModel(modelPath, modelDetail, reticle, scale) {
         try {
             if (nowModel) {
                 scene.remove(nowModel);
@@ -84,7 +85,7 @@ export async function createThreeApp(container, width, height)
             // Load model
             const gltf = await loader.loadAsync(modelPath);
             const model = gltf.scene;
-            model.scale.set(90, 90, 90);
+            model.scale.set(scale, scale, scale);
             model.userData.isDetail = true;
 
             // Place model at reticle position
@@ -199,6 +200,18 @@ export async function createThreeApp(container, width, height)
         }
     }
 
+    /**
+     * 現在表示中のモデルをすべて削除する
+     */
+    function clearModels() {
+        if (nowModel) {
+            scene.remove(nowModel);
+            disposeModel(nowModel);
+            nowModel = null;
+            objectList.length = 0;
+        }
+    }
+
     // Add click event listener
     renderer.domElement.addEventListener('click', handleClick);
 
@@ -208,6 +221,7 @@ export async function createThreeApp(container, width, height)
         camera,
         labelRenderer,
         loadModel,
+        clearModels,
         objectList,
     };
 }

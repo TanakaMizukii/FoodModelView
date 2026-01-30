@@ -19,6 +19,7 @@ const storeInfo = [
             modelDisplaySettings: {
                 scale: 1,
                 scaleARjs: 0.09,
+                scaleAlvaAR: 30,
                 scaleWebXR: 0.0085,
                 scale3DViewer: 1,
                 detailPosition: [2, 6, -7],
@@ -48,6 +49,7 @@ const storeInfo = [
             modelDisplaySettings: {
                 scale: 1,
                 scaleARjs: 7,
+                scaleAlvaAR: 30,
                 scaleWebXR: 0.7,
                 scale3DViewer: 1,
                 detailPosition: [0, 0.22, -0.24],

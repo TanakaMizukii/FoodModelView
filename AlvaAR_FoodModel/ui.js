@@ -25,6 +25,18 @@ const productModels = storeData.products;
 window.currentStoreName = storeName;
 window.currentStore = store;
 
+// 3Dビュワーページへ遷移する
+window.onExit = function() {
+    window.location.href = `https://www.food.in3d.world/ja/${storeName}/viewer/`;
+};
+
+// 現在表示中のモデルをすべてクリアする
+window.onClear = function() {
+    if (window.clearModels && typeof window.clearModels === 'function') {
+        window.clearModels();
+    }
+};
+
 document.addEventListener('DOMContentLoaded', function() {
     const menuContainer = document.getElementById('menuContainer');
     const menuToggle = document.getElementById('menuToggle');

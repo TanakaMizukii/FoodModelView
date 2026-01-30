@@ -34,6 +34,9 @@ setTimeout(() =>
         overlay.remove();
         document.getElementById('menuContainer').classList.remove('hidden');
         document.getElementById('menuToggleDesktop').classList.remove('hidden');
+        document.getElementById('ar-ui').classList.remove('hidden');
+        document.getElementById('exit-button').classList.remove('hidden');
+        document.getElementById('clear-objects').classList.remove('hidden');
         Camera.Initialize(config).then(media => demo(media)).catch(error => alert('Camera ' + error));
     }, { once: true });
 }, splashFadeTime);
@@ -58,6 +61,7 @@ async function demo(media)
     const storeName = params.get('') || params.get('store') || 'kaishu';
     const store = storeInfo.find(s => s.use_name === storeName) || storeInfo[0];
     const defaultModel = store.firstEnvironment.defaultModel;
+    const scaleAlvaAR = store.firstEnvironment.modelDisplaySettings.scaleAlvaAR;
 
     // Three.js 部分（別ファイルに分離したものを呼ぶ）
     const three = await createThreeApp(container, canvas.width, canvas.height);
@@ -66,6 +70,7 @@ async function demo(media)
     const renderer = three.renderer; // insertBefore で使うなら
     const labelRenderer = three.labelRenderer;
     const loadModel = three.loadModel;
+    const clearModels = three.clearModels;
 
     // カメラ映像キャンバスを3Dモデルキャンバスより前へ置く
     container.insertBefore(canvas, renderer.domElement);
@@ -86,10 +91,13 @@ async function demo(media)
 
     reticle.add(axesHelper);
 
-    // ui.js のメニュークリックから呼び出せるようにグローバルに公開（reticleをバインド）
+    // ui.js のメニュークリックから呼び出せるようにグローバルに公開（reticleとスケールをバインド）
     window.loadModel = function(modelPath, modelDetail) {
-        return loadModel(modelPath, modelDetail, reticle);
+        return loadModel(modelPath, modelDetail, reticle, scaleAlvaAR);
     };
+
+    // モデルクリア関数をグローバルに公開
+    window.clearModels = clearModels;
 
     Stats.add('total');
     Stats.add('video');
@@ -186,7 +194,7 @@ async function demo(media)
             }
             // レティクルが見えてから1.5秒後にモデルを一度だけ表示（店舗のデフォルトモデル）
             if (viewNum === 0 && reticleShowTime !== null && now - reticleShowTime > 1500) {
-                loadModel(defaultModel.path, defaultModel.detail, reticle);
+                loadModel(defaultModel.path, defaultModel.detail, reticle, scaleAlvaAR);
                 viewNum = 1;
                 reticleShowTime = null;
             }
