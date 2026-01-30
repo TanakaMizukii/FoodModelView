@@ -187,6 +187,7 @@ export async function createThreeApp(container, width, height)
         const intersects = raycaster.intersectObjects(objectList, true);
 
         if (intersects.length > 0) {
+            event.stopPropagation();
             let clickedObject = intersects[0].object;
             while (clickedObject.parent && clickedObject !== nowModel) {
                 clickedObject = clickedObject.parent;

@@ -105,7 +105,7 @@ async function demo(media)
     Stats.add('slam');
 
     document.body.appendChild(Stats.el);
-    document.body.addEventListener("click", () => alva.reset(), false);
+    container.addEventListener("click", () => alva.reset(), false);
 
     window.addEventListener('resize', () => {
         const newWidth = container.clientWidth;
