@@ -5,6 +5,7 @@ import { AlvaARConnectorTHREE } from './assets/alva_ar_three.js';
 import { Camera, onFrame, resize2cover } from "./assets/utils.js";
 
 import { createThreeApp } from './Three.js';
+import storeInfo from './data/storeInfo.js';
 
 const config = {
     video: {
@@ -50,6 +51,12 @@ async function demo(media)
 
     const applyPose = AlvaARConnectorTHREE.Initialize(THREE);
 
+    // URLから店舗情報を取得
+    const params = new URLSearchParams(window.location.search);
+    const storeName = params.get('') || params.get('store') || 'kaishu';
+    const store = storeInfo.find(s => s.use_name === storeName) || storeInfo[0];
+    const defaultModel = store.firstEnvironment.defaultModel;
+
     // Three.js 部分（別ファイルに分離したものを呼ぶ）
     const three = await createThreeApp(container, canvas.width, canvas.height);
     const scene = three.scene;
@@ -76,6 +83,11 @@ async function demo(media)
     axesHelper.scale.set(100, 100, 100); // レティクルのスケールを打ち消す
 
     reticle.add(axesHelper);
+
+    // ui.js のメニュークリックから呼び出せるようにグローバルに公開（reticleをバインド）
+    window.loadModel = function(modelPath, modelDetail) {
+        return loadModel(modelPath, modelDetail, reticle);
+    };
 
     Stats.add('total');
     Stats.add('video');
@@ -170,9 +182,9 @@ async function demo(media)
             if (!reticle.visible) {
                 reticleShowTime = null;
             }
-            // レティクルが見えてから1.5秒後にモデルを一度だけ表示
+            // レティクルが見えてから1.5秒後にモデルを一度だけ表示（店舗のデフォルトモデル）
             if (viewNum === 0 && reticleShowTime !== null && now - reticleShowTime > 1500) {
-                loadModel('./models/Tun_of2.glb', 'タンの中の上質な部分を選別 程よい油が口の中に広がります', reticle);
+                loadModel(defaultModel.path, defaultModel.detail, reticle);
                 viewNum = 1;
                 reticleShowTime = null;
             }

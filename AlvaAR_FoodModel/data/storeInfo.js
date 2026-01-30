@@ -1,6 +1,4 @@
-import type { StoreInfo } from "./types";
-
-const storeInfo: StoreInfo[] = [
+const storeInfo = [
     {
         id: 1,
         use_name: 'kaishu',
@@ -63,6 +61,6 @@ const storeInfo: StoreInfo[] = [
 
 export default storeInfo;
 
-export function findStoreBySlug(slug: string) {
+export function findStoreBySlug(slug) {
     return storeInfo.find((s) => s.use_name === slug) ?? null;
 }

@@ -1,6 +1,4 @@
-import type { Category, ProductModelsProps } from '../types';
-
-export const categories: Category[] = [
+export const categories = [
     {
         id: 1,
         name: 'メインメニュー',
@@ -33,7 +31,7 @@ export const categories: Category[] = [
     },
 ];
 
-export const productCategory: string[] = [
+export const productCategory = [
     'メインメニュー',
     'カルビ',
     '盛り合わせ',
@@ -42,7 +40,7 @@ export const productCategory: string[] = [
 ];
 
 // 商品とモデルの関連付け
-export const productModels: ProductModelsProps = [
+export const productModels = [
     {
         id: 1,
         name: 'カルビ盛り（2,3人前）',

@@ -1,7 +1,5 @@
-import type { Category, ProductModelsProps, FirstEnvironment } from '../types';
-
 // 初期環境設定
-export const firstEnvironment: FirstEnvironment = {
+export const firstEnvironment = {
     hdrPath: '/hdr/denden/',
     hdrFile: 'dndn_2.1_small.hdr',
     defaultModel: {
@@ -12,7 +10,7 @@ export const firstEnvironment: FirstEnvironment = {
     },
 };
 
-export const categories: Category[] = [
+export const categories = [
     {
         id: 1,
         name: 'メインメニュー',
@@ -51,7 +49,7 @@ export const categories: Category[] = [
     },
 ];
 
-export const productCategory: string[] = [
+export const productCategory = [
     'メインメニュー',
     'カレー',
     '鶏丼系',
@@ -61,7 +59,7 @@ export const productCategory: string[] = [
 ];
 
 // 商品とモデルの関連付け (価格は後で追加)
-export const productModels: ProductModelsProps = [
+export const productModels = [
     // === 鶏丼系 ===
     {
         id: 1,
