@@ -85,12 +85,12 @@ async function demo(media)
     reticle.scale.set(100, 100, 100);
     scene.add(reticle);
 
-    // デバッグ用: XYZ軸ヘルパーをレティクルに追加
-    // 赤=X, 緑=Y, 青=Z
-    const axesHelper = new THREE.AxesHelper(0.1);
-    axesHelper.scale.set(100, 100, 100); // レティクルのスケールを打ち消す
+    // // デバッグ用: XYZ軸ヘルパーをレティクルに追加
+    // // 赤=X, 緑=Y, 青=Z
+    // const axesHelper = new THREE.AxesHelper(0.1);
+    // axesHelper.scale.set(100, 100, 100); // レティクルのスケールを打ち消す
 
-    reticle.add(axesHelper);
+    // reticle.add(axesHelper);
 
     // ui.js のメニュークリックから呼び出せるようにグローバルに公開（reticleとスケールをバインド）
     window.loadModel = function(modelPath, modelName, modelDetail, modelPrice) {
