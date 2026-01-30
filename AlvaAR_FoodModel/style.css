@@ -635,49 +635,11 @@
     100% { transform: rotate(360deg); }
 }
 
-/* 詳細情報のスタイルを最適化 */
-.detail {
-    display: inline-block;
-    background-color: rgba(255, 255, 255, 0.75);
-    border-style: solid;
-    border-width: 1px;
-    padding: 0.5rem;
-    text-align: left;
-    white-space: normal;
-    white-space: pre-wrap;
-    letter-spacing: 0.1em;
-    width: fit-content;
-    max-width: 600px;
-    font-weight: 500;
-    color: #333;
-    overflow: hidden;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    visibility: visible;
-    /* アニメーション設定 */
-    animation: detailFadeIn 4s ease-in;
-    animation-name: title_text;
-    animation-duration: 0.3s;
-    animation-timing-function: ease-out;
-    animation-fill-mode: forwards;
-}
-
-/* テキスト拡大アニメーション */
-@keyframes title_text {
-    0% {
-        clip-path: inset(0 100% 0 0);
-        opacity: 1;
-    }
-    100% {
-        clip-path: inset(0 0 0 0);
-        opacity: 1;
-    }
-}
-
-/* モデルが切り替わる際に表示される詳細情報にフェードイン効果を追加 */
+/* 詳細パネル フェードインアニメーション */
 @keyframes detailFadeIn {
     0% {
         opacity: 0;
-        transform: translateY(10px);
+        transform: translateY(6px);
     }
     100% {
         opacity: 1;
@@ -743,15 +705,22 @@
 }
 
 .detail {
+    display: block;
     min-width: 200px;
     max-width: 260px;
     padding: 12px 14px;
     border-radius: 12px;
     background: rgba(30, 30, 36, 0.88);
-    border:  1px solid #f5f5f5;
+    border: 1px solid #f5f5f5;
     color: #fff;
     box-shadow: 0 6px 20px rgba(0,0,0,.25);
     backdrop-filter: blur(4px);
+    white-space: normal;
+    word-break: break-word;
+    overflow-wrap: break-word;
+    line-height: 1.5;
+    visibility: visible;
+    animation: detailFadeIn 0.3s ease-out;
 }
 .panel__name {
     font-size: 18px;

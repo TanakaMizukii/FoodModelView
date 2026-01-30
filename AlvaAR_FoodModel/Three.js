@@ -68,7 +68,7 @@ export async function createThreeApp(container, width, height)
      * @param {THREE.Mesh} reticle
      * @param {number} scale
      */
-    async function loadModel(modelPath, modelDetail, reticle, scale) {
+    async function loadModel(modelPath, modelName, modelDetail, modelPrice, reticle, scale) {
         try {
             if (nowModel) {
                 scene.remove(nowModel);
@@ -92,6 +92,7 @@ export async function createThreeApp(container, width, height)
             model.position.copy(reticle.position);
             model.quaternion.copy(reticle.quaternion);
             model.rotateX( Math.PI / 2);
+            model.rotateY( Math.PI / 2);
 
             scene.add(model);
             objectList.push(model);
@@ -107,7 +108,14 @@ export async function createThreeApp(container, width, height)
             // Create detail label
             const detailDiv = document.createElement('div');
             detailDiv.className = 'detail';
-            detailDiv.textContent = modelDetail;
+            detailDiv.innerHTML = `
+                <h3 class="panel__name">${modelName}</h3><hr>
+                <p class="panel__desc">${modelDetail}</p>
+                <div class="panel__price" aria-label="価格">
+                    <span class="food-panel__price-currency">￥</span>
+                    <span class="panel__price-value">${modelPrice} 円</span>
+                </div>
+            `;
 
             const detail = new CSS2DObject(detailDiv);
             detail.position.set(0.1, 0.08, -0.03);
@@ -201,6 +209,18 @@ export async function createThreeApp(container, width, height)
     }
 
     /**
+     * モデルのバウンディングボックスとレティクルの当たり判定
+     * @param {THREE.Mesh} reticle
+     * @returns {boolean} 衝突しているかどうか
+     */
+    const _modelBox = new THREE.Box3();
+    function checkReticleCollision(reticle) {
+        if (!nowModel) return false;
+        _modelBox.setFromObject(nowModel);
+        return _modelBox.containsPoint(reticle.position);
+    }
+
+    /**
      * 現在表示中のモデルをすべて削除する
      */
     function clearModels() {
@@ -222,6 +242,7 @@ export async function createThreeApp(container, width, height)
         labelRenderer,
         loadModel,
         clearModels,
+        checkReticleCollision,
         objectList,
     };
 }

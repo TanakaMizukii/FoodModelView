@@ -302,9 +302,9 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // モデルを読み込んで表示する関数
-    function loadAndDisplayModel(modelPath, modelDetail) {
+    function loadAndDisplayModel(modelPath, modelName, modelDetail, modelPrice) {
         if (window.loadModel && typeof window.loadModel === 'function') {
-            window.loadModel(modelPath, modelDetail);
+            window.loadModel(modelPath, modelName, modelDetail, modelPrice);
 
             if (isMobileView) {
                 toggleMenuState(false);
@@ -324,7 +324,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 const product = productModels.find(p => p.id === productId);
 
                 if (product && product.model) {
-                    loadAndDisplayModel(product.model, product.description);
+                    loadAndDisplayModel(product.model, product.name, product.description, product.price);
                 } else {
                     const productName = this.querySelector('.menu-item-title').textContent;
                     alert(`${productName}の3Dモデルは利用できません。`);

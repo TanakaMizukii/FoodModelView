@@ -71,6 +71,7 @@ async function demo(media)
     const labelRenderer = three.labelRenderer;
     const loadModel = three.loadModel;
     const clearModels = three.clearModels;
+    const checkReticleCollision = three.checkReticleCollision;
 
     // カメラ映像キャンバスを3Dモデルキャンバスより前へ置く
     container.insertBefore(canvas, renderer.domElement);
@@ -78,7 +79,7 @@ async function demo(media)
     // 平面可視化用レティクルの作成（水平平面に表示するためX軸で-90度回転）
     const reticle = new THREE.Mesh(
         new THREE.RingGeometry(0.05, 0.065, 32).rotateY( Math.PI / 20),
-        new THREE.MeshBasicMaterial({side: THREE.DoubleSide}),
+        new THREE.MeshBasicMaterial({side: THREE.DoubleSide, transparent: true, opacity: 1.0}),
     );
     reticle.visible = false;
     reticle.scale.set(100, 100, 100);
@@ -92,8 +93,8 @@ async function demo(media)
     reticle.add(axesHelper);
 
     // ui.js のメニュークリックから呼び出せるようにグローバルに公開（reticleとスケールをバインド）
-    window.loadModel = function(modelPath, modelDetail) {
-        return loadModel(modelPath, modelDetail, reticle, scaleAlvaAR);
+    window.loadModel = function(modelPath, modelName, modelDetail, modelPrice) {
+        return loadModel(modelPath, modelName, modelDetail, modelPrice, reticle, scaleAlvaAR);
     };
 
     // モデルクリア関数をグローバルに公開
@@ -194,9 +195,15 @@ async function demo(media)
             }
             // レティクルが見えてから1.5秒後にモデルを一度だけ表示（店舗のデフォルトモデル）
             if (viewNum === 0 && reticleShowTime !== null && now - reticleShowTime > 1500) {
-                loadModel(defaultModel.path, defaultModel.detail, reticle, scaleAlvaAR);
+                loadModel(defaultModel.path, defaultModel.name, defaultModel.detail, defaultModel.price, reticle, scaleAlvaAR);
                 viewNum = 1;
                 reticleShowTime = null;
+            }
+
+            // モデルとレティクルの当たり判定
+            if (reticle.visible) {
+                const colliding = checkReticleCollision(reticle);
+                reticle.material.opacity = colliding ? 0.1 : 1.0;
             }
 
             renderer.render(scene, camera);
