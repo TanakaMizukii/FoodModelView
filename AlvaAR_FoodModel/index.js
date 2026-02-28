@@ -5,6 +5,7 @@ import { AlvaARConnectorTHREE } from './assets/alva_ar_three.js';
 import { Camera, onFrame, resize2cover } from "./assets/utils.js";
 
 import { createThreeApp } from './Three.js';
+import storeInfo from './data/storeInfo.js';
 
 const config = {
     video: {
@@ -31,6 +32,11 @@ setTimeout(() =>
     start.addEventListener('click', () =>
     {
         overlay.remove();
+        document.getElementById('menuContainer').classList.remove('hidden');
+        document.getElementById('menuToggleDesktop').classList.remove('hidden');
+        document.getElementById('ar-ui').classList.remove('hidden');
+        document.getElementById('exit-button').classList.remove('hidden');
+        document.getElementById('clear-objects').classList.remove('hidden');
         Camera.Initialize(config).then(media => demo(media)).catch(error => alert('Camera ' + error));
     }, { once: true });
 }, splashFadeTime);
@@ -50,6 +56,13 @@ async function demo(media)
 
     const applyPose = AlvaARConnectorTHREE.Initialize(THREE);
 
+    // URLから店舗情報を取得
+    const params = new URLSearchParams(window.location.search);
+    const storeName = params.get('') || params.get('store') || 'kaishu';
+    const store = storeInfo.find(s => s.use_name === storeName) || storeInfo[0];
+    const defaultModel = store.firstEnvironment.defaultModel;
+    const scaleAlvaAR = store.firstEnvironment.modelDisplaySettings.scaleAlvaAR;
+
     // Three.js 部分（別ファイルに分離したものを呼ぶ）
     const three = await createThreeApp(container, canvas.width, canvas.height);
     const scene = three.scene;
@@ -57,6 +70,8 @@ async function demo(media)
     const renderer = three.renderer; // insertBefore で使うなら
     const labelRenderer = three.labelRenderer;
     const loadModel = three.loadModel;
+    const clearModels = three.clearModels;
+    const checkReticleCollision = three.checkReticleCollision;
 
     // カメラ映像キャンバスを3Dモデルキャンバスより前へ置く
     container.insertBefore(canvas, renderer.domElement);
@@ -64,25 +79,33 @@ async function demo(media)
     // 平面可視化用レティクルの作成（水平平面に表示するためX軸で-90度回転）
     const reticle = new THREE.Mesh(
         new THREE.RingGeometry(0.05, 0.065, 32).rotateY( Math.PI / 20),
-        new THREE.MeshBasicMaterial({side: THREE.DoubleSide}),
+        new THREE.MeshBasicMaterial({side: THREE.DoubleSide, transparent: true, opacity: 1.0}),
     );
     reticle.visible = false;
     reticle.scale.set(100, 100, 100);
     scene.add(reticle);
 
-    // デバッグ用: XYZ軸ヘルパーをレティクルに追加
-    // 赤=X, 緑=Y, 青=Z
-    const axesHelper = new THREE.AxesHelper(0.1);
-    axesHelper.scale.set(100, 100, 100); // レティクルのスケールを打ち消す
+    // // デバッグ用: XYZ軸ヘルパーをレティクルに追加
+    // // 赤=X, 緑=Y, 青=Z
+    // const axesHelper = new THREE.AxesHelper(0.1);
+    // axesHelper.scale.set(100, 100, 100); // レティクルのスケールを打ち消す
 
-    reticle.add(axesHelper);
+    // reticle.add(axesHelper);
+
+    // ui.js のメニュークリックから呼び出せるようにグローバルに公開（reticleとスケールをバインド）
+    window.loadModel = function(modelPath, modelName, modelDetail, modelPrice) {
+        return loadModel(modelPath, modelName, modelDetail, modelPrice, reticle, scaleAlvaAR);
+    };
+
+    // モデルクリア関数をグローバルに公開
+    window.clearModels = clearModels;
 
     Stats.add('total');
     Stats.add('video');
     Stats.add('slam');
 
     document.body.appendChild(Stats.el);
-    document.body.addEventListener("click", () => alva.reset(), false);
+    container.addEventListener("click", () => alva.reset(), false);
 
     window.addEventListener('resize', () => {
         const newWidth = container.clientWidth;
@@ -170,11 +193,17 @@ async function demo(media)
             if (!reticle.visible) {
                 reticleShowTime = null;
             }
-            // レティクルが見えてから1.5秒後にモデルを一度だけ表示
+            // レティクルが見えてから1.5秒後にモデルを一度だけ表示（店舗のデフォルトモデル）
             if (viewNum === 0 && reticleShowTime !== null && now - reticleShowTime > 1500) {
-                loadModel('./models/Tun_of2.glb', 'タンの中の上質な部分を選別 程よい油が口の中に広がります', reticle);
+                loadModel(defaultModel.path, defaultModel.name, defaultModel.detail, defaultModel.price, reticle, scaleAlvaAR);
                 viewNum = 1;
                 reticleShowTime = null;
+            }
+
+            // モデルとレティクルの当たり判定
+            if (reticle.visible) {
+                const colliding = checkReticleCollision(reticle);
+                reticle.material.opacity = colliding ? 0.1 : 1.0;
             }
 
             renderer.render(scene, camera);
