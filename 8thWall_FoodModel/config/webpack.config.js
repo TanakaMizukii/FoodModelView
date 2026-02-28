@@ -101,6 +101,21 @@ const config = {
           to: path.join(distPath, 'image-targets'),
           noErrorOnMissing: true,
         },
+        {
+          from: path.join(rootPath, 'models'),
+          to: path.join(distPath, 'models'),
+          noErrorOnMissing: true,
+        },
+        {
+          from: path.join(rootPath, 'images'),
+          to: path.join(distPath, 'images'),
+          noErrorOnMissing: true,
+        },
+        {
+          from: path.join(rootPath, 'basis'),
+          to: path.join(distPath, 'basis'),
+          noErrorOnMissing: true,
+        },
       ],
     }),
   ],

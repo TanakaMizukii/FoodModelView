@@ -4,6 +4,7 @@
 // is loaded, and before body.html is loaded.
 
 import './index.css'
+import './ui'
 import {initScenePipelineModule} from './threejs-scene-init'
 import * as camerafeedHtml from './camerafeed.html'
 
